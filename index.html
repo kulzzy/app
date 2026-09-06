@@ -751,6 +751,78 @@ var startup =
         "kulzzyImmediateStartup"
     );
 
+
+/* =====================================================
+   CHECK IF KULZZY RADIO IS ALREADY INSTALLED
+===================================================== */
+
+var installed = false;
+
+try{
+
+    installed =
+        localStorage.getItem(
+            "kulzzyRadioInstalled"
+        ) === "true";
+
+}
+catch(error){
+
+    installed = false;
+
+}
+
+
+if(
+    window.matchMedia &&
+    (
+        window.matchMedia(
+            "(display-mode: standalone)"
+        ).matches ||
+
+        window.matchMedia(
+            "(display-mode: fullscreen)"
+        ).matches
+    )
+){
+
+    installed = true;
+
+}
+
+
+if(
+    window.navigator &&
+    window.navigator.standalone === true
+){
+
+    installed = true;
+
+}
+
+
+/* =====================================================
+   IF ALREADY INSTALLED
+   REMOVE INSTALLATION BOX IMMEDIATELY
+===================================================== */
+
+if(installed){
+
+    if(startup){
+
+        startup.remove();
+
+    }
+
+    return;
+
+}
+
+
+/* =====================================================
+   INSTALL / CONTINUE BUTTONS
+===================================================== */
+
 var installButton =
     document.getElementById(
         "kulzzyImmediateInstallButton"
@@ -760,6 +832,7 @@ var continueButton =
     document.getElementById(
         "kulzzyImmediateContinueButton"
     );
+
 
 if(continueButton){
 
@@ -777,6 +850,7 @@ if(continueButton){
     );
 
 }
+
 
 if(installButton){
 
@@ -805,6 +879,7 @@ if(installButton){
     );
 
 }
+
 
 })();
 </script>
