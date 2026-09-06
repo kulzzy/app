@@ -18,6 +18,37 @@
 
     function isInstalled() {
 
+        /* -----------------------------------------------
+           REMEMBER SUCCESSFUL INSTALLATION
+        ----------------------------------------------- */
+
+        try {
+
+            if (
+                localStorage.getItem(
+                    "kulzzyRadioInstalled"
+                ) === "true"
+            ) {
+
+                return true;
+
+            }
+
+        }
+        catch (error) {
+
+            console.log(
+                "Kulzzy installation storage check:",
+                error
+            );
+
+        }
+
+
+        /* -----------------------------------------------
+           ANDROID / CHROME / CHROMIUM
+        ----------------------------------------------- */
+
         if (
             window.matchMedia &&
             window.matchMedia(
@@ -29,6 +60,10 @@
 
         }
 
+
+        /* -----------------------------------------------
+           FULLSCREEN
+        ----------------------------------------------- */
 
         if (
             window.matchMedia &&
@@ -42,6 +77,10 @@
         }
 
 
+        /* -----------------------------------------------
+           IOS
+        ----------------------------------------------- */
+
         if (
             window.navigator &&
             window.navigator.standalone === true
@@ -53,6 +92,69 @@
 
 
         return false;
+
+    }
+
+
+    /* =====================================================
+       REMOVE ALL KULZZY INSTALL SCREENS
+    ===================================================== */
+
+    function removeInstallScreens() {
+
+        var startup =
+            document.getElementById(
+                "kulzzyImmediateStartup"
+            );
+
+
+        if (startup) {
+
+            startup.remove();
+
+        }
+
+
+        var screen =
+            document.getElementById(
+                "kulzzyInstallScreen"
+            );
+
+
+        if (screen) {
+
+            screen.remove();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       REMEMBER INSTALLATION
+    ===================================================== */
+
+    function rememberInstallation() {
+
+        try {
+
+            localStorage.setItem(
+                "kulzzyRadioInstalled",
+                "true"
+            );
+
+        }
+        catch (error) {
+
+            console.log(
+                "Kulzzy installation storage error:",
+                error
+            );
+
+        }
+
+
+        removeInstallScreens();
 
     }
 
@@ -80,17 +182,22 @@
             navigator.userAgent ||
             "";
 
+
         var ios =
             /iphone|ipad|ipod/i.test(ua);
+
 
         var webkit =
             /webkit/i.test(ua);
 
+
         var chrome =
             /crios/i.test(ua);
 
+
         var firefox =
             /fxios/i.test(ua);
+
 
         return (
             ios &&
@@ -129,9 +236,6 @@
 
     /* =====================================================
        BEFORE INSTALL PROMPT
-
-       IMPORTANT:
-       Chrome / Chromium decides when this event exists.
     ===================================================== */
 
     window.addEventListener(
@@ -188,6 +292,8 @@
     function createInstallScreen() {
 
         if (isInstalled()) {
+
+            removeInstallScreens();
 
             return;
 
@@ -336,7 +442,7 @@
                             "accepted"
                         ) {
 
-                            closeInstallScreen();
+                            rememberInstallation();
 
                         }
 
@@ -457,14 +563,6 @@
             return;
 
         }
-
-
-        /*
-         * Do NOT immediately say installation is unavailable.
-         *
-         * The browser may fire beforeinstallprompt shortly
-         * after the page loads.
-         */
 
 
         if (deferredInstallPrompt) {
@@ -939,10 +1037,12 @@
             deferredInstallPrompt =
                 null;
 
+
             window.kulzzyInstallPrompt =
                 null;
 
-            closeInstallScreen();
+
+            rememberInstallation();
 
         },
         false
@@ -956,6 +1056,8 @@
     function startInstallSystem() {
 
         if (isInstalled()) {
+
+            removeInstallScreens();
 
             return;
 
