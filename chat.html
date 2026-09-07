@@ -1,0 +1,2548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kulzzy Radio Chat</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#06111f;
+    color:#fff;
+}
+
+body{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.app{
+    width:100%;
+    max-width:650px;
+    height:100vh;
+    max-height:900px;
+    background:#0a1929;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+/* HEADER */
+
+.header{
+    background:#07182a;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#ffd700;
+    color:#07182a;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.brand-text h1{
+    margin:0;
+    font-size:17px;
+    color:#ffd700;
+}
+
+.brand-text p{
+    margin:3px 0 0;
+    font-size:11px;
+    color:#9db0c5;
+}
+
+.notification-btn{
+    border:1px solid #ffd700;
+    background:transparent;
+    color:#ffd700;
+    border-radius:20px;
+    padding:8px 11px;
+    font-size:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.notification-btn:hover{
+    background:#ffd700;
+    color:#07182a;
+}
+
+/* PROFILE */
+
+.profile{
+    padding:9px 14px;
+    background:#0d2135;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.profile-info{
+    min-width:0;
+}
+
+.profile-name{
+    color:#fff;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.profile-code{
+    color:#ffd700;
+    font-size:11px;
+    margin-top:3px;
+}
+
+.logout-btn{
+    background:#142c45;
+    border:1px solid rgba(255,255,255,.1);
+    color:#fff;
+    border-radius:7px;
+    padding:7px 10px;
+    font-size:10px;
+    cursor:pointer;
+}
+
+/* CHAT */
+
+.messages{
+    flex:1;
+    overflow-y:auto;
+    padding:18px 12px;
+    scroll-behavior:smooth;
+}
+
+.messages::-webkit-scrollbar{
+    width:5px;
+}
+
+.messages::-webkit-scrollbar-thumb{
+    background:#27445f;
+    border-radius:10px;
+}
+
+.empty-chat{
+    text-align:center;
+    color:#8295aa;
+    font-size:13px;
+    padding:50px 20px;
+}
+
+.message{
+    display:flex;
+    width:100%;
+    margin-bottom:14px;
+}
+
+/*
+    SENT MESSAGE = LEFT
+    RECEIVED FROM KULZZY RADIO = RIGHT
+*/
+
+.message.user{
+    justify-content:flex-start;
+}
+
+.message.admin{
+    justify-content:flex-end;
+}
+
+.message-bubble{
+    max-width:78%;
+    padding:11px 14px;
+    border-radius:15px;
+    background:#17304b;
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.message.user .message-bubble{
+    background:#075e54;
+    border-color:#087f73;
+    border-bottom-left-radius:4px;
+}
+
+.message.admin .message-bubble{
+    background:#1d3557;
+    border-color:#2c4f75;
+    border-bottom-right-radius:4px;
+}
+
+.message-name{
+    font-size:11px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.message.user .message-name{
+    color:#ffd700;
+}
+
+.message.admin .message-name{
+    color:#62d9ff;
+}
+
+.message-text{
+    color:#fff;
+    white-space:pre-wrap;
+    word-break:break-word;
+    line-height:1.45;
+    font-size:14px;
+}
+
+.message-time{
+    color:#a9b8c8;
+    font-size:10px;
+    margin-top:6px;
+    text-align:left;
+}
+
+.message-media{
+    display:block;
+    max-width:100%;
+    max-height:300px;
+    margin-top:7px;
+    border-radius:10px;
+    object-fit:cover;
+}
+
+.message-video{
+    display:block;
+    width:100%;
+    max-width:320px;
+    max-height:300px;
+    margin-top:7px;
+    border-radius:10px;
+    background:#000;
+}
+
+/* REPLY */
+
+.reply-box{
+    display:none;
+    background:#102941;
+    border-top:1px solid rgba(255,255,255,.08);
+    padding:8px 12px;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.reply-box.active{
+    display:flex;
+}
+
+.reply-content{
+    border-left:3px solid #ffd700;
+    padding-left:8px;
+    min-width:0;
+}
+
+.reply-title{
+    color:#ffd700;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.reply-text{
+    color:#b8c7d5;
+    font-size:11px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:450px;
+}
+
+.reply-close{
+    border:0;
+    background:transparent;
+    color:#fff;
+    font-size:18px;
+    cursor:pointer;
+}
+
+/* COMPOSER */
+
+.composer{
+    background:#07182a;
+    border-top:1px solid rgba(255,255,255,.08);
+    padding:10px;
+}
+
+.upload-preview{
+    display:none;
+    margin-bottom:8px;
+    position:relative;
+    width:max-content;
+    max-width:100%;
+}
+
+.upload-preview.active{
+    display:block;
+}
+
+.upload-preview img,
+.upload-preview video{
+    width:100px;
+    height:100px;
+    object-fit:cover;
+    border-radius:9px;
+    border:1px solid #31516e;
+}
+
+.remove-preview{
+    position:absolute;
+    right:-7px;
+    top:-7px;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    border:0;
+    background:#e53935;
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.composer-row{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.attach-btn{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    border:1px solid #294762;
+    background:#102941;
+    color:#ffd700;
+    font-size:19px;
+    cursor:pointer;
+    flex-shrink:0;
+}
+
+#fileInput{
+    display:none;
+}
+
+.message-input{
+    flex:1;
+    min-width:0;
+    height:42px;
+    resize:none;
+    border:1px solid #294762;
+    background:#102941;
+    color:#fff;
+    border-radius:22px;
+    padding:11px 15px;
+    outline:none;
+    font-size:13px;
+}
+
+.message-input::placeholder{
+    color:#7890a6;
+}
+
+.message-input:focus{
+    border-color:#ffd700;
+}
+
+.send-btn{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    border:0;
+    background:#ffd700;
+    color:#07182a;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    flex-shrink:0;
+}
+
+.send-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+/* LOGIN */
+
+.login-screen{
+    position:fixed;
+    inset:0;
+    background:#06111f;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100;
+}
+
+.login-box{
+    width:100%;
+    max-width:420px;
+    background:#0d2135;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+    padding:24px;
+    text-align:center;
+}
+
+.login-logo{
+    width:60px;
+    height:60px;
+    margin:0 auto 12px;
+    border-radius:50%;
+    background:#ffd700;
+    color:#07182a;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    font-weight:bold;
+}
+
+.login-box h2{
+    margin:0;
+    color:#ffd700;
+}
+
+.login-box p{
+    color:#9db0c5;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.phone-input{
+    width:100%;
+    height:45px;
+    background:#07182a;
+    border:1px solid #294762;
+    border-radius:8px;
+    color:#fff;
+    padding:0 13px;
+    outline:none;
+    margin-top:8px;
+}
+
+.login-action{
+    width:100%;
+    height:45px;
+    margin-top:10px;
+    border:0;
+    border-radius:8px;
+    background:#ffd700;
+    color:#07182a;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.login-action:disabled{
+    opacity:.5;
+}
+
+.otp-section{
+    display:none;
+}
+
+.otp-section.active{
+    display:block;
+}
+
+.login-message{
+    margin-top:10px;
+    font-size:11px;
+    color:#ffb4b4;
+}
+
+#recaptcha-container{
+    margin-top:10px;
+}
+
+/* PROFILE FORM */
+
+.profile-screen{
+    position:fixed;
+    inset:0;
+    background:#06111f;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:90;
+}
+
+.profile-screen.active{
+    display:flex;
+}
+
+.profile-box{
+    width:100%;
+    max-width:420px;
+    background:#0d2135;
+    border-radius:16px;
+    padding:24px;
+}
+
+.profile-box h2{
+    margin:0;
+    color:#ffd700;
+}
+
+.profile-box p{
+    color:#9db0c5;
+    font-size:12px;
+}
+
+.profile-field{
+    width:100%;
+    height:45px;
+    margin-top:10px;
+    background:#07182a;
+    border:1px solid #294762;
+    border-radius:8px;
+    color:#fff;
+    padding:0 13px;
+    outline:none;
+}
+
+.profile-submit{
+    width:100%;
+    height:45px;
+    margin-top:12px;
+    background:#ffd700;
+    border:0;
+    border-radius:8px;
+    color:#07182a;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* LOADING */
+
+.loading{
+    position:fixed;
+    inset:0;
+    background:#06111f;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:200;
+}
+
+.loading.hidden{
+    display:none;
+}
+
+.loading-box{
+    text-align:center;
+}
+
+.spinner{
+    width:38px;
+    height:38px;
+    border:4px solid #27445f;
+    border-top-color:#ffd700;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:0 auto 12px;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.loading-text{
+    color:#ffd700;
+    font-size:12px;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    body{
+        align-items:stretch;
+    }
+
+    .app{
+        max-height:none;
+        height:100vh;
+    }
+
+    .header{
+        padding:11px 12px;
+    }
+
+    .brand-text h1{
+        font-size:15px;
+    }
+
+    .notification-btn{
+        font-size:9px;
+        padding:7px 8px;
+    }
+
+    .message-bubble{
+        max-width:85%;
+    }
+
+    .message-text{
+        font-size:13px;
+    }
+
+}
+
+</style>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<!-- ONESIGNAL -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+</head>
+
+<body>
+
+<!-- LOADING -->
+
+<div class="loading" id="loadingScreen">
+
+    <div class="loading-box">
+
+        <div class="spinner"></div>
+
+        <div class="loading-text">
+            Connecting to Kulzzy Radio...
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- LOGIN -->
+
+<div class="login-screen" id="loginScreen">
+
+    <div class="login-box">
+
+        <div class="login-logo">
+            K
+        </div>
+
+        <h2>Kulzzy Radio</h2>
+
+        <p>
+            Private chat with Kulzzy Radio.
+            Enter your phone number to continue.
+        </p>
+
+        <div id="phoneSection">
+
+            <input
+                type="tel"
+                id="phoneInput"
+                class="phone-input"
+                placeholder="+2348012345678"
+                autocomplete="tel"
+            >
+
+            <div id="recaptcha-container"></div>
+
+            <button
+                class="login-action"
+                id="sendOtpBtn"
+            >
+                SEND OTP
+            </button>
+
+        </div>
+
+
+        <div
+            class="otp-section"
+            id="otpSection"
+        >
+
+            <input
+                type="number"
+                id="otpInput"
+                class="phone-input"
+                placeholder="Enter OTP"
+                inputmode="numeric"
+            >
+
+            <button
+                class="login-action"
+                id="verifyOtpBtn"
+            >
+                VERIFY OTP
+            </button>
+
+        </div>
+
+
+        <div
+            class="login-message"
+            id="loginMessage"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- PROFILE -->
+
+<div
+    class="profile-screen"
+    id="profileScreen"
+>
+
+    <div class="profile-box">
+
+        <h2>Welcome to Kulzzy Radio</h2>
+
+        <p>
+            Please enter your name and phone number.
+            Your private Kulzzy chat code will be created automatically.
+        </p>
+
+        <input
+            type="text"
+            id="profileName"
+            class="profile-field"
+            placeholder="Your name"
+        >
+
+        <input
+            type="tel"
+            id="profilePhone"
+            class="profile-field"
+            placeholder="Phone number"
+        >
+
+        <button
+            class="profile-submit"
+            id="createProfileBtn"
+        >
+            CONTINUE
+        </button>
+
+        <div
+            class="login-message"
+            id="profileMessage"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- MAIN APP -->
+
+<div
+    class="app"
+    id="mainApp"
+    style="display:none;"
+>
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="brand">
+
+            <div class="logo">
+                K
+            </div>
+
+            <div class="brand-text">
+
+                <h1>
+                    Kulzzy Radio
+                </h1>
+
+                <p>
+                    Private Chat
+                </p>
+
+            </div>
+
+        </div>
+
+        <button
+            class="notification-btn"
+            id="notificationBtn"
+        >
+            🔔 TURN ON NOTIFICATIONS
+        </button>
+
+    </div>
+
+
+    <!-- PROFILE -->
+
+    <div class="profile">
+
+        <div class="profile-info">
+
+            <div
+                class="profile-name"
+                id="displayName"
+            >
+                User
+            </div>
+
+            <div
+                class="profile-code"
+                id="displayCode"
+            >
+                KULZZY000000
+            </div>
+
+        </div>
+
+        <button
+            class="logout-btn"
+            id="logoutBtn"
+        >
+            LOGOUT
+        </button>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+
+    <div
+        class="messages"
+        id="messages"
+    >
+
+        <div
+            class="empty-chat"
+            id="emptyChat"
+        >
+            No messages yet.<br>
+            Send a message to Kulzzy Radio.
+        </div>
+
+    </div>
+
+
+    <!-- REPLY -->
+
+    <div
+        class="reply-box"
+        id="replyBox"
+    >
+
+        <div class="reply-content">
+
+            <div class="reply-title">
+                REPLYING TO
+            </div>
+
+            <div
+                class="reply-text"
+                id="replyText"
+            ></div>
+
+        </div>
+
+        <button
+            class="reply-close"
+            id="closeReplyBtn"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <!-- COMPOSER -->
+
+    <div class="composer">
+
+        <div
+            class="upload-preview"
+            id="uploadPreview"
+        >
+
+            <img
+                id="previewImage"
+                style="display:none;"
+            >
+
+            <video
+                id="previewVideo"
+                style="display:none;"
+                controls
+            ></video>
+
+            <button
+                class="remove-preview"
+                id="removePreviewBtn"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="composer-row">
+
+            <button
+                class="attach-btn"
+                id="attachBtn"
+            >
+                +
+            </button>
+
+            <input
+                type="file"
+                id="fileInput"
+                accept="image/*,video/*"
+            >
+
+            <textarea
+                class="message-input"
+                id="messageInput"
+                placeholder="Write a message..."
+                rows="1"
+            ></textarea>
+
+            <button
+                class="send-btn"
+                id="sendBtn"
+            >
+                ➤
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyDsCEPNnY6LeQot30HuXFo2F36v6eD7n3k",
+
+    authDomain:
+        "kulzzy-chat.firebaseapp.com",
+
+    databaseURL:
+        "https://kulzzy-chat-default-rtdb.europe-west1.firebasedatabase.app",
+
+    projectId:
+        "kulzzy-chat",
+
+    storageBucket:
+        "kulzzy-chat.firebasestorage.app",
+
+    messagingSenderId:
+        "780479389980",
+
+    appId:
+        "1:780479389980:web:39c5c35bca1a673a5cdad9",
+
+    measurementId:
+        "G-CZMLV3SRPS"
+
+};
+
+
+firebase.initializeApp(firebaseConfig);
+
+const auth =
+    firebase.auth();
+
+const db =
+    firebase.database();
+
+
+/* =========================================================
+   CLOUDINARY
+========================================================= */
+
+const CLOUDINARY_CLOUD_NAME =
+    "s4j0x7dk";
+
+const CLOUDINARY_UPLOAD_PRESET =
+    "kulzzy_chat";
+
+const CLOUDINARY_ENDPOINT =
+    "https://api.cloudinary.com/v1_1/s4j0x7dk/auto/upload";
+
+
+/* =========================================================
+   ONESIGNAL
+========================================================= */
+
+const ONESIGNAL_APP_ID =
+    "cd457ce6-826f-44f7-b653-c371feb790b6";
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let currentUser = null;
+
+let currentProfile = null;
+
+let confirmationResult = null;
+
+let recaptchaVerifier = null;
+
+let selectedFile = null;
+
+let replyMessage = null;
+
+let messagesListener = null;
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loadingScreen =
+    document.getElementById("loadingScreen");
+
+const loginScreen =
+    document.getElementById("loginScreen");
+
+const profileScreen =
+    document.getElementById("profileScreen");
+
+const mainApp =
+    document.getElementById("mainApp");
+
+const messages =
+    document.getElementById("messages");
+
+const emptyChat =
+    document.getElementById("emptyChat");
+
+const phoneInput =
+    document.getElementById("phoneInput");
+
+const otpInput =
+    document.getElementById("otpInput");
+
+const sendOtpBtn =
+    document.getElementById("sendOtpBtn");
+
+const verifyOtpBtn =
+    document.getElementById("verifyOtpBtn");
+
+const loginMessage =
+    document.getElementById("loginMessage");
+
+const profileName =
+    document.getElementById("profileName");
+
+const profilePhone =
+    document.getElementById("profilePhone");
+
+const createProfileBtn =
+    document.getElementById("createProfileBtn");
+
+const profileMessage =
+    document.getElementById("profileMessage");
+
+const displayName =
+    document.getElementById("displayName");
+
+const displayCode =
+    document.getElementById("displayCode");
+
+const messageInput =
+    document.getElementById("messageInput");
+
+const sendBtn =
+    document.getElementById("sendBtn");
+
+const attachBtn =
+    document.getElementById("attachBtn");
+
+const fileInput =
+    document.getElementById("fileInput");
+
+const uploadPreview =
+    document.getElementById("uploadPreview");
+
+const previewImage =
+    document.getElementById("previewImage");
+
+const previewVideo =
+    document.getElementById("previewVideo");
+
+const removePreviewBtn =
+    document.getElementById("removePreviewBtn");
+
+const replyBox =
+    document.getElementById("replyBox");
+
+const replyText =
+    document.getElementById("replyText");
+
+const closeReplyBtn =
+    document.getElementById("closeReplyBtn");
+
+const notificationBtn =
+    document.getElementById("notificationBtn");
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+
+/* =========================================================
+   HELPER
+========================================================= */
+
+function escapeHtml(value){
+
+    if(value === undefined ||
+       value === null){
+
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   DATE / TIME
+========================================================= */
+
+function formatTime(timestamp){
+
+    if(!timestamp){
+        return "";
+    }
+
+    const date =
+        new Date(timestamp);
+
+    return date.toLocaleDateString(
+        "en-NG",
+        {
+            day:"2-digit",
+            month:"short",
+            year:"numeric"
+        }
+    )
+    +
+    " "
+    +
+    date.toLocaleTimeString(
+        "en-NG",
+        {
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   GENERATE KULZZY CODE
+========================================================= */
+
+function generateKulzzyCode(){
+
+    const number =
+        Math.floor(
+            100000 +
+            Math.random() * 900000
+        );
+
+    return "KULZZY" + number;
+
+}
+
+
+/* =========================================================
+   CREATE UNIQUE CODE
+========================================================= */
+
+async function createUniqueCode(){
+
+    let code = "";
+
+    let exists = true;
+
+    while(exists){
+
+        code =
+            generateKulzzyCode();
+
+        const snapshot =
+            await db
+            .ref("chatCodes/" + code)
+            .once("value");
+
+        exists =
+            snapshot.exists();
+
+    }
+
+    return code;
+
+}
+
+
+/* =========================================================
+   INITIALIZE RECAPTCHA
+========================================================= */
+
+function setupRecaptcha(){
+
+    if(recaptchaVerifier){
+        return;
+    }
+
+    recaptchaVerifier =
+        new firebase.auth.RecaptchaVerifier(
+            "recaptcha-container",
+            {
+                size:"normal"
+            }
+        );
+
+    recaptchaVerifier.render();
+
+}
+
+
+/* =========================================================
+   SEND OTP
+========================================================= */
+
+sendOtpBtn.addEventListener(
+    "click",
+    async function(){
+
+        const phone =
+            phoneInput.value.trim();
+
+        if(!phone){
+
+            loginMessage.textContent =
+                "Enter your phone number.";
+
+            return;
+        }
+
+        sendOtpBtn.disabled = true;
+
+        loginMessage.textContent =
+            "Sending OTP...";
+
+        try{
+
+            setupRecaptcha();
+
+            confirmationResult =
+                await auth.signInWithPhoneNumber(
+                    phone,
+                    recaptchaVerifier
+                );
+
+            document
+                .getElementById("otpSection")
+                .classList.add("active");
+
+            loginMessage.textContent =
+                "OTP sent. Enter the code.";
+
+        }catch(error){
+
+            console.error(error);
+
+            loginMessage.textContent =
+                error.message ||
+                "Unable to send OTP.";
+
+            sendOtpBtn.disabled = false;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   VERIFY OTP
+========================================================= */
+
+verifyOtpBtn.addEventListener(
+    "click",
+    async function(){
+
+        const otp =
+            otpInput.value.trim();
+
+        if(!otp){
+
+            loginMessage.textContent =
+                "Enter the OTP.";
+
+            return;
+        }
+
+        verifyOtpBtn.disabled = true;
+
+        loginMessage.textContent =
+            "Verifying...";
+
+        try{
+
+            await confirmationResult.confirm(
+                otp
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            loginMessage.textContent =
+                error.message ||
+                "Invalid OTP.";
+
+            verifyOtpBtn.disabled = false;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+auth.onAuthStateChanged(
+    async function(user){
+
+        if(user){
+
+            currentUser =
+                user;
+
+            await loadUserProfile();
+
+        }else{
+
+            currentUser =
+                null;
+
+            loadingScreen.classList.add(
+                "hidden"
+            );
+
+            loginScreen.style.display =
+                "flex";
+
+            mainApp.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   LOAD USER PROFILE
+========================================================= */
+
+async function loadUserProfile(){
+
+    try{
+
+        const snapshot =
+            await db
+            .ref("users/" + currentUser.uid)
+            .once("value");
+
+        if(snapshot.exists()){
+
+            currentProfile =
+                snapshot.val();
+
+            showChat();
+
+        }else{
+
+            loadingScreen.classList.add(
+                "hidden"
+            );
+
+            loginScreen.style.display =
+                "none";
+
+            profileScreen.classList.add(
+                "active"
+            );
+
+            profilePhone.value =
+                currentUser.phoneNumber || "";
+
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+        loadingScreen.classList.add(
+            "hidden"
+        );
+
+        loginMessage.textContent =
+            "Unable to load your profile.";
+
+    }
+
+}
+
+
+/* =========================================================
+   CREATE PROFILE
+========================================================= */
+
+createProfileBtn.addEventListener(
+    "click",
+    async function(){
+
+        const name =
+            profileName.value.trim();
+
+        const phone =
+            profilePhone.value.trim();
+
+        if(!name){
+
+            profileMessage.textContent =
+                "Enter your name.";
+
+            return;
+        }
+
+        if(!phone){
+
+            profileMessage.textContent =
+                "Enter your phone number.";
+
+            return;
+        }
+
+        createProfileBtn.disabled = true;
+
+        profileMessage.textContent =
+            "Creating your private chat...";
+
+        try{
+
+            const code =
+                await createUniqueCode();
+
+            const profile = {
+
+                name:name,
+
+                phone:phone,
+
+                chatCode:code,
+
+                uid:currentUser.uid,
+
+                createdAt:
+                    firebase.database.ServerValue.TIMESTAMP
+
+            };
+
+            await db
+                .ref(
+                    "users/" +
+                    currentUser.uid
+                )
+                .set(profile);
+
+            await db
+                .ref(
+                    "chatCodes/" +
+                    code
+                )
+                .set({
+
+                    uid:
+                        currentUser.uid,
+
+                    name:name,
+
+                    createdAt:
+                        firebase.database.ServerValue.TIMESTAMP
+
+                });
+
+            currentProfile =
+                profile;
+
+            profileScreen.classList.remove(
+                "active"
+            );
+
+            showChat();
+
+        }catch(error){
+
+            console.error(error);
+
+            profileMessage.textContent =
+                error.message ||
+                "Unable to create profile.";
+
+            createProfileBtn.disabled = false;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SHOW CHAT
+========================================================= */
+
+function showChat(){
+
+    loginScreen.style.display =
+        "none";
+
+    profileScreen.classList.remove(
+        "active"
+    );
+
+    mainApp.style.display =
+        "flex";
+
+    loadingScreen.classList.add(
+        "hidden"
+    );
+
+    displayName.textContent =
+        currentProfile.name ||
+        "User";
+
+    displayCode.textContent =
+        currentProfile.chatCode ||
+        "";
+
+    startMessagesListener();
+
+    setupOneSignal();
+
+}
+
+
+/* =========================================================
+   MESSAGES LISTENER
+========================================================= */
+
+function startMessagesListener(){
+
+    if(messagesListener){
+
+        messagesListener.off();
+
+    }
+
+    const ref =
+        db.ref(
+            "conversations/" +
+            currentUser.uid +
+            "/messages"
+        );
+
+    messagesListener =
+        ref;
+
+    ref.on(
+        "child_added",
+        function(snapshot){
+
+            renderMessage(
+                snapshot.key,
+                snapshot.val()
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   RENDER MESSAGE
+========================================================= */
+
+function renderMessage(id,message){
+
+    if(
+        document.getElementById(
+            "message-" + id
+        )
+    ){
+
+        return;
+
+    }
+
+    if(emptyChat){
+
+        emptyChat.remove();
+
+    }
+
+    const wrapper =
+        document.createElement("div");
+
+    const isMyMessage =
+        message.senderUid ===
+        currentUser.uid;
+
+    /*
+        USER SENT MESSAGE = LEFT
+        KULZZY RADIO RECEIVED = RIGHT
+    */
+
+    wrapper.className =
+        "message " +
+        (
+            isMyMessage
+                ? "user"
+                : "admin"
+        );
+
+    wrapper.id =
+        "message-" + id;
+
+    const bubble =
+        document.createElement("div");
+
+    bubble.className =
+        "message-bubble";
+
+    let html = "";
+
+    html +=
+        '<div class="message-name">' +
+        escapeHtml(
+            isMyMessage
+                ? (
+                    message.senderName ||
+                    currentProfile.name ||
+                    "You"
+                )
+                : "Kulzzy Radio"
+        ) +
+        '</div>';
+
+
+    /* REPLY */
+
+    if(message.replyTo){
+
+        let repliedText =
+            message.replyTo.text ||
+            (
+                message.replyTo.mediaType === "image"
+                    ? "📷 Picture"
+                    :
+                message.replyTo.mediaType === "video"
+                    ? "🎥 Video"
+                    :
+                "Message"
+            );
+
+        html +=
+            '<div style="' +
+            'border-left:3px solid #ffd700;' +
+            'padding-left:8px;' +
+            'margin-bottom:7px;' +
+            'color:#aebccc;' +
+            'font-size:11px;' +
+            '">' +
+
+            escapeHtml(
+                repliedText
+            ) +
+
+            '</div>';
+
+    }
+
+
+    /* TEXT */
+
+    if(message.text){
+
+        html +=
+            '<div class="message-text">' +
+            escapeHtml(
+                message.text
+            ) +
+            '</div>';
+
+    }
+
+
+    /* IMAGE */
+
+    if(
+        message.mediaUrl &&
+        message.mediaType === "image"
+    ){
+
+        html +=
+            '<img ' +
+            'class="message-media" ' +
+            'src="' +
+            escapeHtml(
+                message.mediaUrl
+            ) +
+            '" ' +
+            'alt="Picture">';
+
+    }
+
+
+    /* VIDEO */
+
+    if(
+        message.mediaUrl &&
+        message.mediaType === "video"
+    ){
+
+        html +=
+            '<video ' +
+            'class="message-video" ' +
+            'controls ' +
+            'playsinline>' +
+
+            '<source src="' +
+            escapeHtml(
+                message.mediaUrl
+            ) +
+            '">' +
+
+            '</video>';
+
+    }
+
+
+    /* DATE AND TIME */
+
+    html +=
+        '<div class="message-time">' +
+        formatTime(
+            message.createdAt
+        ) +
+        '</div>';
+
+
+    bubble.innerHTML =
+        html;
+
+    wrapper.appendChild(
+        bubble
+    );
+
+
+    /*
+        Received messages can be
+        selected for reply.
+    */
+
+    if(!isMyMessage){
+
+        wrapper.addEventListener(
+            "click",
+            function(){
+
+                setReply(
+                    message
+                );
+
+            }
+        );
+
+    }
+
+
+    messages.appendChild(
+        wrapper
+    );
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+}
+
+
+/* =========================================================
+   REPLY
+========================================================= */
+
+function setReply(message){
+
+    replyMessage =
+        message;
+
+    let text =
+        message.text ||
+        (
+            message.mediaType === "image"
+                ? "📷 Picture"
+                :
+            message.mediaType === "video"
+                ? "🎥 Video"
+                :
+            "Message"
+        );
+
+    replyText.textContent =
+        text;
+
+    replyBox.classList.add(
+        "active"
+    );
+
+}
+
+
+closeReplyBtn.addEventListener(
+    "click",
+    function(){
+
+        replyMessage =
+            null;
+
+        replyBox.classList.remove(
+            "active"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ATTACH FILE
+========================================================= */
+
+attachBtn.addEventListener(
+    "click",
+    function(){
+
+        fileInput.click();
+
+    }
+);
+
+
+/* =========================================================
+   FILE SELECTED
+========================================================= */
+
+fileInput.addEventListener(
+    "change",
+    function(){
+
+        const file =
+            fileInput.files[0];
+
+        if(!file){
+
+            return;
+
+        }
+
+        if(file.size > 25 * 1024 * 1024){
+
+            alert(
+                "File is too large. Maximum size is 25MB."
+            );
+
+            fileInput.value =
+                "";
+
+            return;
+
+        }
+
+        selectedFile =
+            file;
+
+        uploadPreview.classList.add(
+            "active"
+        );
+
+        previewImage.style.display =
+            "none";
+
+        previewVideo.style.display =
+            "none";
+
+        const url =
+            URL.createObjectURL(
+                file
+            );
+
+        if(file.type.startsWith("image/")){
+
+            previewImage.src =
+                url;
+
+            previewImage.style.display =
+                "block";
+
+        }
+
+        else if(file.type.startsWith("video/")){
+
+            previewVideo.src =
+                url;
+
+            previewVideo.style.display =
+                "block";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   REMOVE FILE
+========================================================= */
+
+removePreviewBtn.addEventListener(
+    "click",
+    function(){
+
+        selectedFile =
+            null;
+
+        fileInput.value =
+            "";
+
+        previewImage.src =
+            "";
+
+        previewVideo.src =
+            "";
+
+        previewImage.style.display =
+            "none";
+
+        previewVideo.style.display =
+            "none";
+
+        uploadPreview.classList.remove(
+            "active"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CLOUDINARY UPLOAD
+========================================================= */
+
+async function uploadToCloudinary(file){
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "file",
+        file
+    );
+
+    formData.append(
+        "upload_preset",
+        CLOUDINARY_UPLOAD_PRESET
+    );
+
+    const response =
+        await fetch(
+            CLOUDINARY_ENDPOINT,
+            {
+                method:"POST",
+                body:formData
+            }
+        );
+
+    if(!response.ok){
+
+        throw new Error(
+            "Cloudinary upload failed."
+        );
+
+    }
+
+    const data =
+        await response.json();
+
+    return {
+
+        url:
+            data.secure_url,
+
+        type:
+            file.type.startsWith("image/")
+                ? "image"
+                : "video"
+
+    };
+
+}
+
+
+/* =========================================================
+   SEND MESSAGE
+========================================================= */
+
+sendBtn.addEventListener(
+    "click",
+    sendMessage
+);
+
+
+messageInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "Enter" &&
+            !event.shiftKey
+        ){
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+);
+
+
+async function sendMessage(){
+
+    const text =
+        messageInput.value.trim();
+
+    if(
+        !text &&
+        !selectedFile
+    ){
+
+        return;
+
+    }
+
+    if(!currentUser){
+
+        return;
+
+    }
+
+    sendBtn.disabled =
+        true;
+
+    try{
+
+        let mediaUrl =
+            "";
+
+        let mediaType =
+            "";
+
+        /* UPLOAD MEDIA */
+
+        if(selectedFile){
+
+            const uploaded =
+                await uploadToCloudinary(
+                    selectedFile
+                );
+
+            mediaUrl =
+                uploaded.url;
+
+            mediaType =
+                uploaded.type;
+
+        }
+
+
+        /* MESSAGE */
+
+        const message = {
+
+            senderUid:
+                currentUser.uid,
+
+            senderName:
+                currentProfile.name ||
+                "User",
+
+            isAdmin:false,
+
+            text:text,
+
+            mediaUrl:
+                mediaUrl,
+
+            mediaType:
+                mediaType,
+
+            createdAt:
+                firebase.database.ServerValue.TIMESTAMP
+
+        };
+
+
+        /* REPLY */
+
+        if(replyMessage){
+
+            message.replyTo = {
+
+                senderUid:
+                    replyMessage.senderUid,
+
+                senderName:
+                    replyMessage.senderName,
+
+                text:
+                    replyMessage.text ||
+                    "",
+
+                mediaUrl:
+                    replyMessage.mediaUrl ||
+                    "",
+
+                mediaType:
+                    replyMessage.mediaType ||
+                    ""
+
+            };
+
+        }
+
+
+        await db
+            .ref(
+                "conversations/" +
+                currentUser.uid +
+                "/messages"
+            )
+            .push(
+                message
+            );
+
+
+        /* CLEAR */
+
+        messageInput.value =
+            "";
+
+        selectedFile =
+            null;
+
+        fileInput.value =
+            "";
+
+        previewImage.src =
+            "";
+
+        previewVideo.src =
+            "";
+
+        previewImage.style.display =
+            "none";
+
+        previewVideo.style.display =
+            "none";
+
+        uploadPreview.classList.remove(
+            "active"
+        );
+
+
+        replyMessage =
+            null;
+
+        replyBox.classList.remove(
+            "active"
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            error.message ||
+            "Unable to send message."
+        );
+
+    }finally{
+
+        sendBtn.disabled =
+            false;
+
+    }
+
+}
+
+
+/* =========================================================
+   ONESIGNAL
+========================================================= */
+
+async function setupOneSignal(){
+
+    try{
+
+        await window.OneSignalDeferred;
+
+    }catch(e){}
+
+
+    try{
+
+        if(
+            !window.OneSignal
+        ){
+
+            setTimeout(
+                setupOneSignal,
+                1500
+            );
+
+            return;
+
+        }
+
+        await OneSignal.init({
+
+            appId:
+                ONESIGNAL_APP_ID,
+
+            allowLocalhostAsSecureOrigin:
+                true,
+
+            notifyButton:{
+                enable:false
+            }
+
+        });
+
+
+        if(currentUser){
+
+            await OneSignal.login(
+                currentUser.uid
+            );
+
+        }
+
+
+        updateNotificationButton();
+
+    }catch(error){
+
+        console.error(
+            "OneSignal error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NOTIFICATION BUTTON
+========================================================= */
+
+notificationBtn.addEventListener(
+    "click",
+    async function(){
+
+        try{
+
+            if(
+                !window.OneSignal
+            ){
+
+                alert(
+                    "Notifications are still loading. Please try again."
+                );
+
+                return;
+
+            }
+
+            await OneSignal.Notifications.requestPermission();
+
+            if(currentUser){
+
+                await OneSignal.login(
+                    currentUser.uid
+                );
+
+            }
+
+            updateNotificationButton();
+
+        }catch(error){
+
+            console.error(error);
+
+            alert(
+                "Please allow notifications in your browser settings."
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   UPDATE NOTIFICATION BUTTON
+========================================================= */
+
+async function updateNotificationButton(){
+
+    try{
+
+        if(
+            !window.OneSignal
+        ){
+
+            return;
+
+        }
+
+        const optedIn =
+            OneSignal
+                .User
+                .PushSubscription
+                .optedIn;
+
+        if(optedIn){
+
+            notificationBtn.textContent =
+                "🔔 NOTIFICATIONS ON";
+
+            notificationBtn.style.borderColor =
+                "#31d158";
+
+            notificationBtn.style.color =
+                "#31d158";
+
+        }else{
+
+            notificationBtn.textContent =
+                "🔔 TURN ON NOTIFICATIONS";
+
+            notificationBtn.style.borderColor =
+                "#ffd700";
+
+            notificationBtn.style.color =
+                "#ffd700";
+
+        }
+
+    }catch(error){
+
+        console.log(
+            "Notification state unavailable"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+logoutBtn.addEventListener(
+    "click",
+    async function(){
+
+        if(
+            !confirm(
+                "Do you want to logout?"
+            )
+        ){
+
+            return;
+
+        }
+
+        try{
+
+            if(
+                messagesListener
+            ){
+
+                messagesListener.off();
+
+            }
+
+            if(
+                window.OneSignal &&
+                currentUser
+            ){
+
+                try{
+
+                    await OneSignal.logout();
+
+                }catch(e){}
+
+            }
+
+            await auth.signOut();
+
+        }catch(error){
+
+            console.error(error);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   AUTO RESIZE TEXTAREA
+========================================================= */
+
+messageInput.addEventListener(
+    "input",
+    function(){
+
+        this.style.height =
+            "42px";
+
+        this.style.height =
+            Math.min(
+                this.scrollHeight,
+                120
+            ) + "px";
+
+    }
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+window.addEventListener(
+    "load",
+    function(){
+
+        loadingScreen.classList.add(
+            "hidden"
+        );
+
+        try{
+
+            setupRecaptcha();
+
+        }catch(error){
+
+            console.log(
+                "reCAPTCHA will initialize when needed."
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
