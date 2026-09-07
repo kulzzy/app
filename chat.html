@@ -747,6 +747,50 @@ video.media {
 </section>
 
 
+<!-- ==========================================================
+     ONESIGNAL
+========================================================== -->
+
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+<script>
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+
+OneSignalDeferred.push(async function(OneSignal) {
+
+    try {
+
+        await OneSignal.init({
+
+            appId:
+                "cd457ce6-826f-44f7-b653-c371feb790b6",
+
+            safari_web_id:
+                "web.onesignal.auto.15375e9b-dec0-4164-84de-dd8ada8f8fb7",
+
+            notifyButton: {
+                enable: true
+            }
+
+        });
+
+        console.log(
+            "Kulzzy OneSignal initialized."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "OneSignal initialization error:",
+            error
+        );
+
+    }
+
+});
+</script>
+
+
 <script type="module">
 
 /* ==========================================================
@@ -941,6 +985,104 @@ let messagesListenerStarted = false;
 
 
 /* ==========================================================
+   ONESIGNAL USER CONNECTION
+========================================================== */
+
+function connectOneSignalUser(uid) {
+
+    if (!uid) {
+        return;
+    }
+
+    window.OneSignalDeferred =
+        window.OneSignalDeferred || [];
+
+    window.OneSignalDeferred.push(
+        async function(OneSignal) {
+
+            try {
+
+                /*
+                   This connects the OneSignal
+                   subscription to the Firebase UID.
+
+                   Example:
+
+                   Firebase UID
+                   ↓
+                   OneSignal external_id
+                   ↓
+                   Only this user receives
+                   their private notification.
+                */
+
+                await OneSignal.login(
+                    String(uid)
+                );
+
+                console.log(
+                    "OneSignal connected to Firebase UID:",
+                    uid
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "OneSignal user connection error:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   REQUEST NOTIFICATION PERMISSION
+========================================================== */
+
+function requestOneSignalPermission() {
+
+    window.OneSignalDeferred =
+        window.OneSignalDeferred || [];
+
+    window.OneSignalDeferred.push(
+        async function(OneSignal) {
+
+            try {
+
+                if (
+                    OneSignal.Notifications &&
+                    typeof OneSignal.Notifications.requestPermission === "function"
+                ) {
+
+                    await OneSignal.Notifications.requestPermission();
+
+                    console.log(
+                        "OneSignal notification permission requested."
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Notification permission error:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
    SCREEN CONTROL
 ========================================================== */
 
@@ -1127,6 +1269,15 @@ verifyBtn.addEventListener("click", async () => {
 
         currentUser = result.user;
 
+        /*
+           Connect verified Firebase user
+           to OneSignal.
+        */
+
+        connectOneSignalUser(
+            currentUser.uid
+        );
+
         hideLoading();
 
         await loadUserProfile();
@@ -1174,6 +1325,15 @@ onAuthStateChanged(auth, async (user) => {
     currentUser = user;
 
     /*
+       Connect restored Firebase login
+       to OneSignal.
+    */
+
+    connectOneSignalUser(
+        currentUser.uid
+    );
+
+    /*
        If Firebase restored a previous login,
        automatically load the private account.
     */
@@ -1200,6 +1360,15 @@ async function loadUserProfile() {
     if (!currentUser) {
         return;
     }
+
+    /*
+       Make sure OneSignal is connected
+       whenever the profile is loaded.
+    */
+
+    connectOneSignalUser(
+        currentUser.uid
+    );
 
     showLoading("Loading your private chat...");
 
@@ -1334,6 +1503,14 @@ createChatBtn.addEventListener("click", async () => {
         chatCodeDisplay.textContent =
             chatCode;
 
+        /*
+           Connect the new user to OneSignal.
+        */
+
+        connectOneSignalUser(
+            currentUser.uid
+        );
+
         hideLoading();
 
         showScreen(codeScreen);
@@ -1399,6 +1576,22 @@ async function createUniqueChatCode() {
 ========================================================== */
 
 openChatBtn.addEventListener("click", () => {
+
+    /*
+       The user has physically tapped a button,
+       so this is a good time to request
+       notification permission.
+    */
+
+    requestOneSignalPermission();
+
+    if (currentUser) {
+
+        connectOneSignalUser(
+            currentUser.uid
+        );
+
+    }
 
     showScreen(chatScreen);
 
