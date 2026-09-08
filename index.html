@@ -1,0 +1,2968 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<link rel="manifest" href="./manifest.json">
+
+<meta name="theme-color" content="#06152B">
+
+<link rel="apple-touch-icon"
+      href="./icon-192.png">
+
+<title>Kulzzy Radio Network</title>
+
+
+<style>
+
+/* =====================================================
+BASIC
+===================================================== */
+
+*{
+box-sizing:border-box;
+}
+
+html,
+body{
+margin:0;
+padding:0;
+width:100%;
+min-height:100%;
+font-family:Arial,Helvetica,sans-serif;
+background:#020d1a;
+}
+
+body{
+overflow-x:hidden;
+}
+
+
+/* =====================================================
+FLOATING NAVIGATION
+===================================================== */
+
+#kulzzyNav{
+
+position:fixed !important;
+
+top:0;
+left:50%;
+
+transform:translateX(-50%);
+
+width:calc(100% - 16px);
+max-width:520px;
+
+height:48px;
+
+background:rgba(7,21,47,.98);
+
+border:1px solid rgba(255,215,0,.45);
+
+border-radius:14px;
+
+display:flex;
+align-items:center;
+justify-content:space-around;
+
+padding:4px;
+
+z-index:99999999;
+
+box-shadow:
+0 4px 18px rgba(0,0,0,.25);
+
+}
+
+.kulzzyNavBtn{
+
+flex:1;
+
+height:40px;
+
+border:none;
+
+background:transparent;
+
+color:white;
+
+font-size:11px;
+
+font-weight:bold;
+
+border-radius:10px;
+
+cursor:pointer;
+
+white-space:nowrap;
+
+transition:.2s ease;
+
+-webkit-tap-highlight-color:transparent;
+
+}
+
+.kulzzyNavBtn:hover{
+
+background:
+rgba(255,215,0,.15);
+
+color:#ffd700;
+
+}
+
+.kulzzyNavBtn.active{
+
+background:#ffd700;
+
+color:#07152f;
+
+}
+
+
+/* =====================================================
+CONTENT
+===================================================== */
+
+#kulzzyContent{
+
+width:100%;
+
+margin:0;
+
+padding:
+70px
+12px
+240px;
+
+}
+
+
+/* =====================================================
+SECTIONS
+===================================================== */
+
+.kulzzySection{
+
+display:none;
+
+width:100%;
+
+max-width:700px;
+
+margin:0 auto;
+
+}
+
+.kulzzySection.active{
+
+display:block;
+
+}
+
+
+/* =====================================================
+FIREBASE CONTENT
+===================================================== */
+
+.kulzzyPublishedContent{
+
+width:100%;
+
+margin:0;
+
+padding:0;
+
+overflow:visible;
+
+}
+
+.kulzzyPublishedContent *{
+
+max-width:100%;
+
+}
+
+.kulzzyPublishedContent img{
+
+max-width:100%;
+
+height:auto;
+
+}
+
+.kulzzyPublishedContent video{
+
+max-width:100%;
+
+height:auto;
+
+}
+
+.kulzzyPublishedContent iframe{
+
+display:block;
+
+width:100%;
+
+max-width:100%;
+
+border:0;
+
+}
+
+.kulzzyPublishedContent table{
+
+max-width:100%;
+
+}
+
+
+/* =====================================================
+MORE PAGES
+===================================================== */
+
+#kulzzyMorePagesMenu{
+
+width:100%;
+
+margin:0;
+
+padding:0;
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+}
+
+.kulzzyMorePageButton{
+
+width:100%;
+
+border:1px solid
+rgba(255,215,0,.35);
+
+border-radius:12px;
+
+padding:14px 15px;
+
+background:#07152f;
+
+color:white;
+
+text-align:left;
+
+font-size:14px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:.2s ease;
+
+-webkit-tap-highlight-color:transparent;
+
+}
+
+.kulzzyMorePageButton:hover{
+
+background:
+rgba(255,215,0,.12);
+
+color:#ffd700;
+
+}
+
+.kulzzyMorePageButton.active{
+
+background:#ffd700;
+
+color:#07152f;
+
+}
+
+
+/* =====================================================
+MORE PAGE CONTENT
+===================================================== */
+
+#kulzzyMorePageContent{
+
+width:100%;
+
+margin:15px 0 0;
+
+padding:0;
+
+}
+
+.kulzzyMorePageContentBox{
+
+width:100%;
+
+margin:0;
+
+padding:0;
+
+background:transparent;
+
+color:inherit;
+
+border:none;
+
+border-radius:0;
+
+overflow:visible;
+
+line-height:1.6;
+
+}
+
+.kulzzyMorePageContentBox *{
+
+box-sizing:border-box;
+
+max-width:100%;
+
+}
+
+.kulzzyMorePageContentBox img{
+
+max-width:100% !important;
+
+height:auto !important;
+
+}
+
+.kulzzyMorePageContentBox video{
+
+max-width:100% !important;
+
+height:auto !important;
+
+}
+
+.kulzzyMorePageContentBox iframe{
+
+display:block;
+
+width:100% !important;
+
+max-width:100% !important;
+
+border:0;
+
+}
+
+.kulzzyMorePageContentBox table{
+
+width:100%;
+
+max-width:100%;
+
+overflow:auto;
+
+display:block;
+
+}
+
+.kulzzyMorePageContentBox p{
+
+line-height:1.7;
+
+}
+
+.kulzzyMorePageContentBox a{
+
+word-break:break-word;
+
+}
+
+.kulzzyMorePageContentBox ul,
+.kulzzyMorePageContentBox ol{
+
+padding-left:25px;
+
+}
+
+
+/* =====================================================
+MORE PAGE ICON
+===================================================== */
+
+.kulzzyMorePageButton{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+}
+
+.kulzzyMorePageIcon{
+
+width:38px;
+
+height:38px;
+
+min-width:38px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:
+rgba(255,215,0,.12);
+
+border:1px solid
+rgba(255,215,0,.35);
+
+border-radius:10px;
+
+font-size:21px;
+
+line-height:1;
+
+}
+
+.kulzzyMorePageTitle{
+
+flex:1;
+
+min-width:0;
+
+line-height:1.3;
+
+}
+
+
+/* =====================================================
+MORE PAGE FULL SCREEN
+===================================================== */
+
+#kulzzyMorePageContent.open{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+margin:0;
+
+padding:75px 0 30px;
+
+background:#07152f;
+
+z-index:999999998;
+
+overflow-y:auto;
+
+overflow-x:hidden;
+
+}
+
+.kulzzyMorePageClose{
+
+position:fixed;
+
+top:10px;
+
+right:10px;
+
+width:42px;
+
+height:42px;
+
+border:1px solid
+rgba(255,215,0,.5);
+
+border-radius:12px;
+
+background:#07152f;
+
+color:#ffd700;
+
+font-size:22px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+z-index:1000000000;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+box-shadow:
+0 4px 18px rgba(0,0,0,.35);
+
+-webkit-tap-highlight-color:transparent;
+
+}
+
+.kulzzyMorePageClose:active{
+
+transform:scale(.94);
+
+}
+
+
+/* =====================================================
+FLOATING RADIO PLAYER
+===================================================== */
+
+#kulzzyFloatingRadio{
+
+position:fixed !important;
+
+left:0 !important;
+
+bottom:0 !important;
+
+width:100% !important;
+
+z-index:999999999 !important;
+
+background:#020d1a;
+
+border-top:4px solid #ffd000;
+
+box-shadow:
+0 -5px 25px rgba(0,0,0,.65);
+
+overflow:hidden;
+
+}
+
+.kulzzyFloatRow{
+
+width:100%;
+
+display:flex;
+
+align-items:stretch;
+
+}
+
+.kulzzyFloatPlayer{
+
+flex:1;
+
+min-width:0;
+
+height:210px;
+
+background:#020d1a;
+
+}
+
+.kulzzyFloatPlayer iframe{
+
+width:100%;
+
+height:100%;
+
+border:0;
+
+display:block;
+
+}
+
+
+/* =====================================================
+LISTENERS
+===================================================== */
+
+.kulzzyFloatListeners{
+
+width:260px;
+
+min-width:260px;
+
+background:#020d1a;
+
+border-left:2px solid #ffd000;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+text-align:center;
+
+padding:15px;
+
+}
+
+.kulzzyFloatListenerTitle{
+
+color:white;
+
+font-size:12px;
+
+font-weight:bold;
+
+white-space:nowrap;
+
+transform:scaleX(.85);
+
+}
+
+.kulzzyFloatDot{
+
+display:inline-block;
+
+width:15px;
+
+height:15px;
+
+background:red;
+
+border-radius:50%;
+
+margin-right:7px;
+
+animation:
+kulzzyFloatBlink 1s infinite;
+
+}
+
+.kulzzyFloatNumber{
+
+color:#ff0015;
+
+font-size:65px;
+
+font-weight:900;
+
+line-height:1;
+
+margin-top:12px;
+
+}
+
+@keyframes kulzzyFloatBlink{
+
+0%,100%{
+
+opacity:1;
+
+box-shadow:
+0 0 6px red,
+0 0 15px red;
+
+}
+
+50%{
+
+opacity:.25;
+
+box-shadow:
+0 0 10px red,
+0 0 25px red;
+
+}
+
+}
+
+
+/* =====================================================
+MOBILE
+===================================================== */
+
+@media(max-width:650px){
+
+#kulzzyFloatingRadio{
+
+border-top-width:3px;
+
+}
+
+.kulzzyFloatRow{
+
+display:flex;
+
+flex-direction:row;
+
+align-items:stretch;
+
+}
+
+.kulzzyFloatPlayer{
+
+width:72%;
+
+height:200px;
+
+flex:none;
+
+}
+
+.kulzzyFloatListeners{
+
+width:28%;
+
+min-width:28%;
+
+padding:8px 3px;
+
+border-left:2px solid #ffd000;
+
+}
+
+.kulzzyFloatListenerTitle{
+
+font-size:13px;
+
+white-space:normal;
+
+}
+
+.kulzzyFloatDot{
+
+width:9px;
+
+height:9px;
+
+margin-right:3px;
+
+}
+
+.kulzzyFloatNumber{
+
+font-size:38px;
+
+margin-top:8px;
+
+}
+
+#kulzzyContent{
+
+padding-bottom:220px;
+
+}
+
+#kulzzyMorePageContent.open{
+
+padding-top:62px;
+
+}
+
+}
+
+
+@media(max-width:380px){
+
+.kulzzyFloatPlayer{
+
+height:195px;
+
+}
+
+.kulzzyFloatListenerTitle{
+
+font-size:12px;
+
+}
+
+.kulzzyFloatNumber{
+
+font-size:32px;
+
+}
+
+#kulzzyContent{
+
+padding-bottom:215px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+IMMEDIATE STARTUP INSTALL SCREEN
+===================================================== -->
+
+<div id="kulzzyImmediateStartup"
+style="
+position:fixed;
+inset:0;
+width:100%;
+height:100%;
+background:#020d1a;
+z-index:2147483646;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+font-family:Arial,Helvetica,sans-serif;
+">
+
+<div
+style="
+width:100%;
+max-width:430px;
+background:#07152f;
+border:2px solid #ffd700;
+border-radius:20px;
+padding:28px 20px;
+text-align:center;
+box-shadow:0 0 30px rgba(0,0,0,.65);
+">
+
+<img src="./logo.jpg"
+style="
+width:110px;
+height:110px;
+object-fit:cover;
+border-radius:50%;
+border:3px solid #ffd700;
+margin-bottom:18px;
+"
+alt="Kulzzy Radio Network">
+
+
+<div
+style="
+color:#ffd700;
+font-size:25px;
+font-weight:900;
+line-height:1.2;
+margin-bottom:12px;
+">
+
+INSTALL KULZZY RADIO
+
+</div>
+
+
+<div
+style="
+color:white;
+font-size:18px;
+font-weight:bold;
+margin-bottom:15px;
+">
+
+🔴 JOIN US LIVE ON-AIR
+
+</div>
+
+
+<div
+style="
+color:#ffffff;
+font-size:14px;
+line-height:1.6;
+margin-bottom:22px;
+">
+
+Install Kulzzy Radio on your phone, tablet or computer for quick access.
+
+</div>
+
+
+<button
+id="kulzzyImmediateInstallButton"
+type="button"
+style="
+width:100%;
+border:none;
+border-radius:12px;
+background:#ffd700;
+color:#07152f;
+font-size:17px;
+font-weight:900;
+padding:15px;
+cursor:pointer;
+margin-bottom:12px;
+">
+
+📲 INSTALL APP
+
+</button>
+
+
+<button
+id="kulzzyImmediateContinueButton"
+type="button"
+style="
+width:100%;
+border:2px solid #ffd700;
+border-radius:12px;
+background:transparent;
+color:white;
+font-size:15px;
+font-weight:bold;
+padding:13px;
+cursor:pointer;
+">
+
+CONTINUE TO KULZZY RADIO
+
+</button>
+
+
+<div
+style="
+color:#ffffff;
+font-size:12px;
+line-height:1.6;
+margin-top:18px;
+">
+
+Android: Open your browser menu ⋮ and choose
+Install app or Add to Home screen.
+
+<br><br>
+
+iPhone/iPad: Tap Share and choose
+Add to Home Screen.
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+INSTALL SCREEN
+===================================================== */
+
+(function(){
+
+var startup =
+document.getElementById(
+"kulzzyImmediateStartup"
+);
+
+
+var installed = false;
+
+
+try{
+
+installed =
+localStorage.getItem(
+"kulzzyRadioInstalled"
+) === "true";
+
+}
+catch(error){
+
+installed = false;
+
+}
+
+
+if(
+window.matchMedia &&
+(
+window.matchMedia(
+"(display-mode: standalone)"
+).matches ||
+
+window.matchMedia(
+"(display-mode: fullscreen)"
+).matches
+)
+){
+
+installed = true;
+
+}
+
+
+if(
+window.navigator &&
+window.navigator.standalone === true
+){
+
+installed = true;
+
+}
+
+
+if(installed){
+
+if(startup){
+
+startup.remove();
+
+}
+
+return;
+
+}
+
+
+var installButton =
+document.getElementById(
+"kulzzyImmediateInstallButton"
+);
+
+
+var continueButton =
+document.getElementById(
+"kulzzyImmediateContinueButton"
+);
+
+
+if(continueButton){
+
+continueButton.addEventListener(
+"click",
+function(){
+
+if(startup){
+
+startup.remove();
+
+}
+
+});
+
+}
+
+
+if(installButton){
+
+installButton.addEventListener(
+"click",
+function(){
+
+if(
+typeof window.kulzzyInstallApp ===
+"function"
+){
+
+window.kulzzyInstallApp();
+
+}
+
+else{
+
+alert(
+"Open your browser menu ⋮ and select " +
+"'Install app' or 'Add to Home screen'."
+);
+
+}
+
+});
+
+}
+
+})();
+
+</script>
+
+
+<!-- =====================================================
+FLOATING NAVIGATION
+===================================================== -->
+
+<nav id="kulzzyNav">
+
+<button
+type="button"
+class="kulzzyNavBtn active"
+data-section="home">
+
+Home
+
+</button>
+
+
+<button
+type="button"
+class="kulzzyNavBtn"
+data-section="request">
+
+<span id="kulzzyRequestButtonName">
+
+👑 FACE OF KULZZY RADIO
+
+</span>
+
+</button>
+
+
+<button
+type="button"
+class="kulzzyNavBtn"
+data-section="wishes">
+
+Wishes
+
+</button>
+
+
+<button
+type="button"
+class="kulzzyNavBtn"
+data-section="market">
+
+Market
+
+</button>
+
+
+<button
+type="button"
+class="kulzzyNavBtn"
+data-section="more">
+
+More
+
+</button>
+
+</nav>
+
+
+<!-- =====================================================
+MAIN CONTENT
+===================================================== -->
+
+<div id="kulzzyContent">
+
+
+<section
+id="kulzzy-home"
+class="kulzzySection active">
+
+<div
+id="kulzzyPublished-home"
+class="kulzzyPublishedContent">
+</div>
+
+</section>
+
+
+<section
+id="kulzzy-request"
+class="kulzzySection">
+
+<div
+id="kulzzyPublished-request"
+class="kulzzyPublishedContent">
+</div>
+
+</section>
+
+
+<section
+id="kulzzy-wishes"
+class="kulzzySection">
+
+<div
+id="kulzzyPublished-wishes"
+class="kulzzyPublishedContent">
+</div>
+
+</section>
+
+
+<section
+id="kulzzy-market"
+class="kulzzySection">
+
+<div
+id="kulzzyPublished-market"
+class="kulzzyPublishedContent">
+</div>
+
+</section>
+
+
+<section
+id="kulzzy-more"
+class="kulzzySection">
+
+<div id="kulzzyMorePagesMenu">
+</div>
+
+
+<div id="kulzzyMorePageContent">
+</div>
+
+</section>
+
+</div>
+
+
+<!-- =====================================================
+FLOATING RADIO PLAYER
+===================================================== -->
+
+<div id="kulzzyFloatingRadio">
+
+<div class="kulzzyFloatRow">
+
+<div class="kulzzyFloatPlayer">
+
+<iframe
+
+src="https://kulzzy.github.io/KULZZY-AUTO-PLAYER/"
+
+title="Kulzzy Radio Network"
+
+allow="autoplay"
+
+scrolling="no">
+
+</iframe>
+
+</div>
+
+
+<div class="kulzzyFloatListeners">
+
+<div>
+
+<div class="kulzzyFloatListenerTitle">
+
+<span class="kulzzyFloatDot">
+</span>
+
+OUR LISTENERS
+
+</div>
+
+
+<div
+id="kulzzyFloatingListenerNumber"
+class="kulzzyFloatNumber">
+
+0
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+LISTENER COUNTER
+===================================================== -->
+
+<script>
+
+(function(){
+
+var count =
+Math.floor(
+Math.random() * 9000
+) + 1000;
+
+
+var display =
+document.getElementById(
+"kulzzyFloatingListenerNumber"
+);
+
+
+if(!display){
+
+return;
+
+}
+
+
+display.textContent =
+count.toLocaleString();
+
+
+setInterval(function(){
+
+var increase =
+Math.random() > .5;
+
+
+var change =
+(
+Math.floor(
+Math.random() * 8
+) + 1
+) * 10;
+
+
+if(increase){
+
+count += change;
+
+}
+
+else{
+
+count -= change;
+
+}
+
+
+if(count < 1000){
+
+count = 1000;
+
+}
+
+
+if(count > 9999){
+
+count = 9999;
+
+}
+
+
+display.textContent =
+count.toLocaleString();
+
+
+},4000);
+
+})();
+
+</script>
+
+
+<!-- =====================================================
+FIREBASE
+===================================================== -->
+
+<script type="module">
+
+import {
+
+initializeApp
+
+}
+
+from
+
+"https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
+
+import {
+
+getDatabase,
+ref,
+onValue
+
+}
+
+from
+
+"https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+
+
+/* =====================================================
+FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyBH85NGWsSAK5cubbPdnmunwYZFZpj_CB0",
+
+authDomain:
+"kulzzy-radio-chat.firebaseapp.com",
+
+databaseURL:
+"https://kulzzy-radio-chat-default-rtdb.europe-west1.firebasedatabase.app",
+
+projectId:
+"kulzzy-radio-chat",
+
+storageBucket:
+"kulzzy-radio-chat.firebasestorage.app",
+
+messagingSenderId:
+"510100635134",
+
+appId:
+"1:510100635134:web:9d3b2e983eb6e9a385d4af"
+
+};
+
+
+let app = null;
+
+let db = null;
+
+
+try{
+
+app =
+initializeApp(
+firebaseConfig
+);
+
+
+db =
+getDatabase(
+app
+);
+
+}
+
+catch(error){
+
+console.error(
+"Firebase initialization error:",
+error
+);
+
+}
+
+
+/* =====================================================
+DYNAMIC EVENT NAVIGATION BUTTON
+===================================================== */
+
+const DEFAULT_EVENT_BUTTON_NAME =
+"👑 FACE OF KULZZY RADIO";
+
+
+const eventButton =
+document.getElementById(
+"kulzzyRequestButtonName"
+);
+
+
+if(db && eventButton){
+
+onValue(
+
+ref(
+db,
+"kulzzyNavigation/eventName"
+),
+
+function(snapshot){
+
+const name =
+snapshot.val();
+
+
+if(
+typeof name !== "string" ||
+!name.trim()
+){
+
+eventButton.textContent =
+DEFAULT_EVENT_BUTTON_NAME;
+
+return;
+
+}
+
+
+eventButton.textContent =
+name.trim();
+
+},
+
+function(error){
+
+console.error(
+"Event button Firebase error:",
+error
+);
+
+eventButton.textContent =
+DEFAULT_EVENT_BUTTON_NAME;
+
+});
+
+}
+
+
+/* =====================================================
+SECTIONS
+===================================================== */
+
+const normalSections = [
+
+"home",
+"request",
+"wishes",
+"market"
+
+];
+
+
+const sectionListeners =
+Object.create(null);
+
+
+/* =====================================================
+MORE
+===================================================== */
+
+let morePagesData = [];
+
+let morePageListeners = null;
+
+
+/* =====================================================
+GET PAGE HTML
+===================================================== */
+
+function getPageHTML(page){
+
+if(!page){
+
+return "";
+
+}
+
+
+if(
+typeof page.html === "string" &&
+page.html.trim()
+){
+
+return page.html;
+
+}
+
+
+const possibleFields = [
+
+"content",
+"writeUp",
+"writeup",
+"body",
+"description",
+"pageContent",
+"htmlContent"
+
+];
+
+
+for(
+const field of possibleFields
+){
+
+if(
+typeof page[field] === "string" &&
+page[field].trim()
+){
+
+return page[field];
+
+}
+
+}
+
+
+if(
+page.blocks &&
+typeof page.blocks === "object"
+){
+
+const blocks =
+
+Object.keys(
+page.blocks
+)
+
+.map(function(id){
+
+const block =
+page.blocks[id] || {};
+
+
+return {
+
+id:id,
+
+html:
+block.html ||
+block.content ||
+block.writeUp ||
+"",
+
+order:
+typeof block.order === "number"
+? block.order
+: 0
+
+};
+
+})
+
+.filter(function(block){
+
+return(
+typeof block.html === "string" &&
+block.html.trim()
+);
+
+})
+
+.sort(function(a,b){
+
+return a.order - b.order;
+
+});
+
+
+if(blocks.length){
+
+return blocks
+
+.map(function(block){
+
+return block.html;
+
+})
+
+.join("\n\n");
+
+}
+
+}
+
+
+return "";
+
+}
+
+
+/* =====================================================
+EXECUTE PUBLISHED SCRIPTS
+===================================================== */
+
+function executePublishedScripts(container){
+
+if(!container){
+
+return;
+
+}
+
+
+const scripts =
+container.querySelectorAll("script");
+
+
+scripts.forEach(function(oldScript){
+
+const newScript =
+document.createElement("script");
+
+
+Array.from(
+oldScript.attributes
+)
+
+.forEach(function(attribute){
+
+newScript.setAttribute(
+attribute.name,
+attribute.value
+);
+
+});
+
+
+newScript.textContent =
+oldScript.textContent;
+
+
+if(oldScript.parentNode){
+
+oldScript.parentNode.replaceChild(
+newScript,
+oldScript
+);
+
+}
+
+});
+
+}
+
+
+/* =====================================================
+DISPLAY NORMAL CONTENT
+===================================================== */
+
+function displayNormalContent(
+section,
+html
+){
+
+const container =
+document.getElementById(
+"kulzzyPublished-" + section
+);
+
+
+if(!container){
+
+return;
+
+}
+
+
+container.innerHTML = "";
+
+
+if(
+!html ||
+!html.trim()
+){
+
+return;
+
+}
+
+
+const wrapper =
+document.createElement("div");
+
+
+wrapper.style.width = "100%";
+
+wrapper.style.maxWidth = "none";
+
+wrapper.style.margin = "0";
+
+wrapper.style.padding = "0";
+
+
+wrapper.innerHTML =
+html;
+
+
+container.appendChild(
+wrapper
+);
+
+
+executePublishedScripts(
+wrapper
+);
+
+}
+
+
+/* =====================================================
+LIVE NORMAL SECTION LISTENER
+===================================================== */
+
+function listenToNormalSection(section){
+
+if(
+!normalSections.includes(section)
+){
+
+return;
+
+}
+
+
+if(!db){
+
+return;
+
+}
+
+
+/*
+   Do not create the same Firebase listener twice.
+*/
+
+if(
+sectionListeners[section]
+){
+
+return;
+
+}
+
+
+const sectionRef =
+ref(
+db,
+"kulzzyContent/" + section
+);
+
+
+sectionListeners[section] =
+
+onValue(
+
+sectionRef,
+
+function(snapshot){
+
+try{
+
+if(!snapshot.exists()){
+
+displayNormalContent(
+section,
+""
+);
+
+return;
+
+}
+
+
+const data =
+snapshot.val();
+
+
+const html =
+getPageHTML(data);
+
+
+displayNormalContent(
+section,
+html
+);
+
+}
+
+catch(error){
+
+console.error(
+"Firebase content display error:",
+section,
+error
+);
+
+}
+
+},
+
+function(error){
+
+console.error(
+"Firebase section listener error:",
+section,
+error
+);
+
+}
+
+);
+
+}
+
+
+/* =====================================================
+MORE PAGE ICON
+===================================================== */
+
+function getMorePageIcon(title){
+
+const text =
+String(title || "")
+.toLowerCase();
+
+
+if(text.includes("about"))
+return "ℹ️";
+
+
+if(text.includes("contact"))
+return "📞";
+
+
+if(text.includes("chat"))
+return "💬";
+
+
+if(text.includes("radio"))
+return "📻";
+
+
+if(text.includes("program"))
+return "🎙️";
+
+
+if(
+text.includes("business") ||
+text.includes("market") ||
+text.includes("service")
+)
+return "💼";
+
+
+if(
+text.includes("birthday") ||
+text.includes("celebration") ||
+text.includes("birth")
+)
+return "🎂";
+
+
+if(
+text.includes("music") ||
+text.includes("song")
+)
+return "🎵";
+
+
+if(text.includes("news"))
+return "📰";
+
+
+if(text.includes("event"))
+return "🎉";
+
+
+if(
+text.includes("photo") ||
+text.includes("picture") ||
+text.includes("gallery")
+)
+return "🖼️";
+
+
+if(text.includes("video"))
+return "🎬";
+
+
+if(text.includes("live"))
+return "🔴";
+
+
+if(text.includes("request"))
+return "📝";
+
+
+if(text.includes("wish"))
+return "💝";
+
+
+if(
+text.includes("install") ||
+text.includes("app")
+)
+return "📱";
+
+
+return "📄";
+
+}
+
+
+/* =====================================================
+SHOW MORE PAGE
+===================================================== */
+
+function showMorePage(
+page,
+button
+){
+
+const menu =
+document.getElementById(
+"kulzzyMorePagesMenu"
+);
+
+
+const content =
+document.getElementById(
+"kulzzyMorePageContent"
+);
+
+
+if(!content || !menu){
+
+return;
+
+}
+
+
+document
+.querySelectorAll(
+".kulzzyMorePageButton"
+)
+.forEach(function(item){
+
+item.classList.remove(
+"active"
+);
+
+});
+
+
+if(button){
+
+button.classList.add(
+"active"
+);
+
+}
+
+
+content.innerHTML = "";
+
+
+const closeButton =
+document.createElement(
+"button"
+);
+
+
+closeButton.type =
+"button";
+
+
+closeButton.className =
+"kulzzyMorePageClose";
+
+
+closeButton.innerHTML =
+"✕";
+
+
+closeButton.setAttribute(
+"aria-label",
+"Close page"
+);
+
+
+closeButton.addEventListener(
+"click",
+function(){
+
+content.classList.remove(
+"open"
+);
+
+content.innerHTML = "";
+
+menu.style.display =
+"flex";
+
+
+document
+.querySelectorAll(
+".kulzzyMorePageButton"
+)
+.forEach(function(item){
+
+item.classList.remove(
+"active"
+);
+
+});
+
+});
+
+
+content.appendChild(
+closeButton
+);
+
+
+const html =
+getPageHTML(page);
+
+
+if(
+html &&
+html.trim()
+){
+
+const pageBox =
+document.createElement(
+"div"
+);
+
+
+pageBox.className =
+"kulzzyMorePageContentBox";
+
+
+pageBox.innerHTML =
+html;
+
+
+content.appendChild(
+pageBox
+);
+
+
+executePublishedScripts(
+pageBox
+);
+
+}
+
+
+menu.style.display =
+"none";
+
+
+content.classList.add(
+"open"
+);
+
+
+content.scrollTop = 0;
+
+}
+
+
+/* =====================================================
+RENDER MORE MENU
+===================================================== */
+
+function renderMorePages(data){
+
+const menu =
+document.getElementById(
+"kulzzyMorePagesMenu"
+);
+
+
+const content =
+document.getElementById(
+"kulzzyMorePageContent"
+);
+
+
+if(!menu || !content){
+
+return;
+
+}
+
+
+const currentlyOpen =
+content.classList.contains(
+"open"
+);
+
+
+let currentlyOpenId = null;
+
+
+if(
+currentlyOpen &&
+content.dataset.pageId
+){
+
+currentlyOpenId =
+content.dataset.pageId;
+
+}
+
+
+menu.innerHTML = "";
+
+
+if(!data){
+
+morePagesData = [];
+
+content.classList.remove(
+"open"
+);
+
+content.innerHTML = "";
+
+menu.style.display =
+"flex";
+
+return;
+
+}
+
+
+morePagesData = Object.keys(
+data
+)
+
+.map(function(id){
+
+const page =
+data[id] || {};
+
+
+return {
+
+id:id,
+
+title:
+page.title ||
+page.name ||
+"Page",
+
+html:
+getPageHTML(page),
+
+order:
+typeof page.order === "number"
+? page.order
+: 0
+
+};
+
+})
+
+.sort(function(a,b){
+
+return a.order - b.order;
+
+});
+
+
+const fragment =
+document.createDocumentFragment();
+
+
+morePagesData.forEach(
+function(page){
+
+const button =
+document.createElement(
+"button"
+);
+
+
+button.type =
+"button";
+
+
+button.className =
+"kulzzyMorePageButton";
+
+
+const icon =
+document.createElement(
+"span"
+);
+
+
+icon.className =
+"kulzzyMorePageIcon";
+
+
+icon.textContent =
+getMorePageIcon(
+page.title
+);
+
+
+const title =
+document.createElement(
+"span"
+);
+
+
+title.className =
+"kulzzyMorePageTitle";
+
+
+title.textContent =
+page.title;
+
+
+button.appendChild(
+icon
+);
+
+button.appendChild(
+title
+);
+
+
+button.addEventListener(
+"click",
+function(){
+
+showMorePage(
+page,
+button
+);
+
+content.dataset.pageId =
+page.id;
+
+}
+);
+
+
+fragment.appendChild(
+button
+);
+
+});
+
+
+menu.appendChild(
+fragment
+);
+
+
+/*
+   If a More page was already open, rebuild it using
+   the newest Firebase version of that page.
+*/
+
+if(currentlyOpen && currentlyOpenId){
+
+const updatedPage =
+morePagesData.find(
+function(page){
+
+return page.id ===
+currentlyOpenId;
+
+});
+
+
+if(updatedPage){
+
+const updatedButton =
+Array.from(
+menu.querySelectorAll(
+".kulzzyMorePageButton"
+)
+)
+
+.find(function(button){
+
+return button.querySelector(
+".kulzzyMorePageTitle"
+)?.textContent ===
+updatedPage.title;
+
+});
+
+
+showMorePage(
+updatedPage,
+updatedButton || null
+);
+
+content.dataset.pageId =
+updatedPage.id;
+
+}
+
+}
+
+}
+
+
+/* =====================================================
+LIVE MORE PAGES LISTENER
+===================================================== */
+
+function listenToMorePages(){
+
+if(!db){
+
+return;
+
+}
+
+
+if(morePageListeners){
+
+return;
+
+}
+
+
+morePageListeners =
+
+onValue(
+
+ref(
+db,
+"kulzzyMorePages"
+),
+
+function(snapshot){
+
+try{
+
+if(!snapshot.exists()){
+
+renderMorePages(
+null
+);
+
+return;
+
+}
+
+
+renderMorePages(
+snapshot.val()
+);
+
+}
+
+catch(error){
+
+console.error(
+"More pages display error:",
+error
+);
+
+}
+
+},
+
+function(error){
+
+console.error(
+"More pages Firebase listener error:",
+error
+);
+
+}
+
+);
+
+}
+
+
+/* =====================================================
+NAVIGATION
+===================================================== */
+
+function openSection(section){
+
+const morePageContent =
+document.getElementById(
+"kulzzyMorePageContent"
+);
+
+
+const moreMenu =
+document.getElementById(
+"kulzzyMorePagesMenu"
+);
+
+
+/*
+   Close an opened More page whenever another
+   navigation section is selected.
+*/
+
+if(morePageContent){
+
+morePageContent.classList.remove(
+"open"
+);
+
+morePageContent.innerHTML = "";
+
+morePageContent.dataset.pageId = "";
+
+}
+
+
+if(moreMenu){
+
+moreMenu.style.display =
+"flex";
+
+}
+
+
+document
+.querySelectorAll(
+".kulzzyMorePageButton"
+)
+.forEach(function(button){
+
+button.classList.remove(
+"active"
+);
+
+});
+
+
+/*
+   Hide every section.
+*/
+
+document
+.querySelectorAll(
+".kulzzySection"
+)
+.forEach(
+function(item){
+
+item.classList.remove(
+"active"
+);
+
+});
+
+
+/*
+   Show selected section.
+*/
+
+const target =
+document.getElementById(
+"kulzzy-" + section
+);
+
+
+if(target){
+
+target.classList.add(
+"active"
+);
+
+}
+
+
+/*
+   Update navigation button.
+*/
+
+document
+.querySelectorAll(
+".kulzzyNavBtn"
+)
+.forEach(
+function(button){
+
+button.classList.remove(
+"active"
+);
+
+
+if(
+button.dataset.section ===
+section
+){
+
+button.classList.add(
+"active"
+);
+
+}
+
+});
+
+
+/*
+   Firebase live listeners are already running.
+
+   Make sure the requested section has a listener.
+*/
+
+if(
+normalSections.includes(section)
+){
+
+listenToNormalSection(
+section
+);
+
+}
+
+
+if(section === "more"){
+
+listenToMorePages();
+
+}
+
+
+window.scrollTo(
+0,
+0
+);
+
+}
+
+
+/* =====================================================
+NAVIGATION BUTTONS
+===================================================== */
+
+document
+.querySelectorAll(
+".kulzzyNavBtn"
+)
+.forEach(
+function(button){
+
+button.addEventListener(
+"click",
+function(){
+
+openSection(
+button.dataset.section
+);
+
+});
+
+});
+
+
+/* =====================================================
+START ALL FIREBASE LISTENERS
+===================================================== */
+
+/*
+   Start all normal content listeners.
+
+   This is what makes Firebase changes automatically
+   appear in the app.
+*/
+
+normalSections.forEach(
+function(section){
+
+listenToNormalSection(
+section
+);
+
+});
+
+
+/*
+   Start More pages listener.
+*/
+
+listenToMorePages();
+
+
+/*
+   Home is the first visible section.
+*/
+
+openSection(
+"home"
+);
+
+</script>
+
+
+<!-- =====================================================
+PWA INSTALLATION + AUTOMATIC UPDATES
+===================================================== -->
+
+<script>
+
+let kulzzyInstallPrompt = null;
+
+
+/* =====================================================
+CAPTURE INSTALL PROMPT
+===================================================== */
+
+window.addEventListener(
+"beforeinstallprompt",
+function(event){
+
+event.preventDefault();
+
+kulzzyInstallPrompt =
+event;
+
+
+/*
+   Make the installation flag available when
+   the browser says the app has been installed.
+*/
+
+console.log(
+"Kulzzy Radio installation prompt ready"
+);
+
+});
+
+
+/* =====================================================
+REGISTER SERVICE WORKER
+===================================================== */
+
+if(
+"serviceWorker" in navigator
+){
+
+window.addEventListener(
+"load",
+async function(){
+
+try{
+
+const registration =
+await navigator.serviceWorker.register(
+"./sw.js",
+{
+scope:"./"
+}
+);
+
+
+console.log(
+"Kulzzy Radio Service Worker registered"
+);
+
+
+/*
+   Check immediately for a new version.
+*/
+
+registration.update();
+
+
+/*
+   Continue checking every 60 seconds.
+*/
+
+setInterval(
+function(){
+
+registration.update();
+
+},
+60000
+);
+
+
+/* =================================================
+NEW VERSION FOUND
+================================================= */
+
+registration.addEventListener(
+"updatefound",
+function(){
+
+const newWorker =
+registration.installing;
+
+
+if(!newWorker){
+
+return;
+
+}
+
+
+newWorker.addEventListener(
+"statechange",
+function(){
+
+if(
+newWorker.state ===
+"installed"
+&&
+navigator.serviceWorker.controller
+){
+
+/*
+   Tell the new service worker to activate.
+*/
+
+newWorker.postMessage({
+
+type:
+"SKIP_WAITING"
+
+});
+
+}
+
+});
+
+});
+
+}
+
+catch(error){
+
+console.error(
+"Service Worker registration failed:",
+error
+);
+
+}
+
+});
+
+}
+
+
+/* =================================================
+SERVICE WORKER CONTROLLER CHANGE
+================================================= */
+
+let kulzzyRefreshing = false;
+
+
+if(
+"serviceWorker" in navigator
+){
+
+navigator.serviceWorker.addEventListener(
+"controllerchange",
+function(){
+
+if(kulzzyRefreshing){
+
+return;
+
+}
+
+
+kulzzyRefreshing = true;
+
+
+/*
+   Reload once after the new application version
+   takes control.
+*/
+
+window.location.reload();
+
+});
+
+}
+
+
+/* =====================================================
+INSTALL FUNCTION
+===================================================== */
+
+window.kulzzyInstallApp =
+async function(){
+
+if(!kulzzyInstallPrompt){
+
+alert(
+"If the Install App option is not showing, " +
+"open Chrome menu ⋮ and select " +
+"'Install app' or 'Add to Home screen'."
+);
+
+return;
+
+}
+
+
+try{
+
+kulzzyInstallPrompt.prompt();
+
+
+const choice =
+await kulzzyInstallPrompt.userChoice;
+
+
+console.log(
+"Installation:",
+choice.outcome
+);
+
+
+kulzzyInstallPrompt =
+null;
+
+}
+
+catch(error){
+
+console.error(
+"Installation error:",
+error
+);
+
+}
+
+};
+
+
+/* =====================================================
+AFTER INSTALLATION
+===================================================== */
+
+window.addEventListener(
+"appinstalled",
+function(){
+
+kulzzyInstallPrompt =
+null;
+
+
+try{
+
+localStorage.setItem(
+"kulzzyRadioInstalled",
+"true"
+);
+
+}
+catch(error){
+
+console.log(
+"Could not save installation state"
+);
+
+}
+
+
+console.log(
+"Kulzzy Radio installed successfully"
+);
+
+});
+
+</script>
+
+
+<script src="./install.js"></script>
+
+</body>
+
+</html>
