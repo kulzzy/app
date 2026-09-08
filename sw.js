@@ -1,19 +1,12 @@
 /* =========================================================
    KULZZY RADIO NETWORK
    SERVICE WORKER
-   VERSION 7
-   FAST + RELIABLE LOADING
+   VERSION 8
+   LIVE + FAST + RELIABLE UPDATES
 ========================================================= */
 
-const CACHE_NAME = "kulzzy-radio-app-v7";
+const CACHE_NAME = "kulzzy-radio-app-v8";
 
-/*
-   Only cache files that are essential to displaying
-   the application shell.
-
-   Do NOT put JavaScript/CSS files here unless we know
-   their exact current names.
-*/
 const APP_SHELL = [
     "./",
     "./index.html",
@@ -51,7 +44,7 @@ self.addEventListener("install", event => {
     );
 
     /*
-       Activate the new service worker immediately.
+       Activate immediately.
     */
     self.skipWaiting();
 
@@ -74,9 +67,6 @@ self.addEventListener("activate", event => {
 
                     cacheNames.map(cacheName => {
 
-                        /*
-                           Delete old Kulzzy caches.
-                        */
                         if(
                             cacheName.startsWith(
                                 "kulzzy-radio-app-"
@@ -120,9 +110,6 @@ self.addEventListener("fetch", event => {
 
     const request = event.request;
 
-    /*
-       We only handle GET requests.
-    */
     if(request.method !== "GET"){
 
         return;
@@ -136,13 +123,15 @@ self.addEventListener("fetch", event => {
 
 
     /* =====================================================
-       EXTERNAL WEB REQUESTS
-       
-       Firebase, Google, radio servers, iframes, etc.
-       
-       Let the browser handle them normally.
-       The service worker must NOT replace a failed
-       external response with index.html.
+       EXTERNAL REQUESTS
+
+       Firebase
+       Google
+       Radio server
+       Iframes
+       External APIs
+
+       Do not cache these.
     ===================================================== */
 
     if(
@@ -151,7 +140,12 @@ self.addEventListener("fetch", event => {
 
         event.respondWith(
 
-            fetch(request)
+            fetch(
+                request,
+                {
+                    cache: "no-store"
+                }
+            )
 
                 .catch(() => {
 
@@ -167,13 +161,12 @@ self.addEventListener("fetch", event => {
 
 
     /* =====================================================
-       NAVIGATION / HTML PAGES
+       HTML / NAVIGATION
 
-       Network first.
+       ALWAYS TRY NETWORK FIRST.
 
-       This is important because users should receive
-       the newest version of the app whenever internet
-       is available.
+       This makes changes to index.html appear immediately
+       when internet is available.
     ===================================================== */
 
     if(
@@ -192,24 +185,20 @@ self.addEventListener("fetch", event => {
 
                 .then(response => {
 
-                    /*
-                       Only cache valid successful responses.
-                    */
                     if(
                         response &&
                         response.ok
                     ){
 
-                        const responseClone =
-                            response.clone();
-
                         caches.open(
                             CACHE_NAME
-                        ).then(cache => {
+                        )
+
+                        .then(cache => {
 
                             cache.put(
                                 request,
-                                responseClone
+                                response.clone()
                             );
 
                         });
@@ -222,12 +211,6 @@ self.addEventListener("fetch", event => {
 
                 .catch(() => {
 
-                    /*
-                       Internet unavailable.
-
-                       First try the exact requested
-                       page from cache.
-                    */
                     return caches.match(
                         request
                     )
@@ -240,10 +223,6 @@ self.addEventListener("fetch", event => {
 
                             }
 
-                            /*
-                               If the exact page isn't cached,
-                               use the main app shell.
-                            */
                             return caches.match(
                                 "./index.html"
                             );
@@ -262,139 +241,76 @@ self.addEventListener("fetch", event => {
     /* =====================================================
        SAME-ORIGIN STATIC FILES
 
-       Examples:
-
-       CSS
        JavaScript
-       images
-       manifest
-       icons
+       CSS
+       Images
+       Manifest
+       Icons
        JSON
-       fonts
-       
-       Cache first, then network.
+       Fonts
 
-       IMPORTANT:
-       If a CSS/JS/image fails, DO NOT return index.html.
-       Returning HTML for a JavaScript/CSS request can
-       break the application.
+       NETWORK FIRST
+
+       This is intentionally different from the old
+       Cache First behaviour.
+
+       The newest file is requested first whenever
+       internet is available.
     ===================================================== */
 
     event.respondWith(
 
-        caches.match(request)
+        fetch(
+            request,
+            {
+                cache: "no-store"
+            }
+        )
 
-            .then(cachedResponse => {
+            .then(networkResponse => {
 
-                if(cachedResponse){
+                if(
+                    networkResponse &&
+                    networkResponse.ok
+                ){
 
-                    /*
-                       Return cached file immediately.
-
-                       At the same time, try to refresh
-                       it from the network.
-                    */
-
-                    fetch(
-                        request,
-                        {
-                            cache: "no-store"
-                        }
+                    caches.open(
+                        CACHE_NAME
                     )
 
-                        .then(networkResponse => {
+                    .then(cache => {
 
-                            if(
-                                networkResponse &&
-                                networkResponse.ok
-                            ){
+                        cache.put(
+                            request,
+                            networkResponse.clone()
+                        );
 
-                                caches.open(
-                                    CACHE_NAME
-                                ).then(cache => {
-
-                                    cache.put(
-                                        request,
-                                        networkResponse.clone()
-                                    );
-
-                                });
-
-                            }
-
-                        })
-
-                        .catch(() => {
-
-                            /*
-                               Network refresh failed.
-
-                               Cached version is still valid.
-                            */
-
-                        });
-
-
-                    return cachedResponse;
+                    });
 
                 }
 
+                return networkResponse;
+
+            })
+
+            .catch(() => {
 
                 /*
-                   File isn't cached.
-
-                   Get it from the network.
+                   If internet is unavailable,
+                   use the cached version.
                 */
-                return fetch(
-                    request,
-                    {
-                        cache: "no-store"
-                    }
+
+                return caches.match(
+                    request
                 )
 
-                    .then(networkResponse => {
+                    .then(cachedResponse => {
 
-                        if(
-                            networkResponse &&
-                            networkResponse.ok
-                        ){
+                        if(cachedResponse){
 
-                            const responseClone =
-                                networkResponse.clone();
-
-                            caches.open(
-                                CACHE_NAME
-                            ).then(cache => {
-
-                                cache.put(
-                                    request,
-                                    responseClone
-                                );
-
-                            });
+                            return cachedResponse;
 
                         }
-
-                        return networkResponse;
-
-                    })
-
-                    .catch(() => {
-
-                        /*
-                           IMPORTANT:
-
-                           Never return index.html here.
-
-                           A failed JS request must remain a
-                           failed JS request.
-
-                           A failed CSS request must remain
-                           a failed CSS request.
-
-                           A failed image request must remain
-                           a failed image request.
-                        */
 
                         return Response.error();
 
@@ -422,10 +338,6 @@ self.addEventListener(
         }
 
 
-        /*
-           Allows the page to tell the service worker
-           to activate immediately.
-        */
         if(
             event.data.type ===
             "SKIP_WAITING"
