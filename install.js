@@ -1,1090 +1,201 @@
-(function () {
+/* =====================================================
+   KULZZY RADIO NETWORK
+   UNIVERSAL INSTALL SUPPORT
+   Works with the existing installation screen in index.html
+   Does not create a second installation screen.
+===================================================== */
 
+(function () {
     "use strict";
 
+    let deferredInstallPrompt = null;
 
-    /* =====================================================
-       KULZZY RADIO NETWORK
-       UNIVERSAL INSTALL SYSTEM
-    ===================================================== */
-
-
-    var deferredInstallPrompt = null;
-
-
-    /* =====================================================
-       INSTALLED CHECK
-    ===================================================== */
+    const installedKey = "kulzzyRadioInstalled";
 
     function isInstalled() {
-
-        /* -----------------------------------------------
-           REMEMBER SUCCESSFUL INSTALLATION
-        ----------------------------------------------- */
-
         try {
-
-            if (
-                localStorage.getItem(
-                    "kulzzyRadioInstalled"
-                ) === "true"
-            ) {
-
+            if (localStorage.getItem(installedKey) === "true") {
                 return true;
-
             }
-
+        } catch (error) {
+            // Continue with browser-based detection.
         }
-        catch (error) {
-
-            console.log(
-                "Kulzzy installation storage check:",
-                error
-            );
-
-        }
-
-
-        /* -----------------------------------------------
-           ANDROID / CHROME / CHROMIUM
-        ----------------------------------------------- */
 
         if (
             window.matchMedia &&
-            window.matchMedia(
-                "(display-mode: standalone)"
-            ).matches
+            (
+                window.matchMedia("(display-mode: standalone)").matches ||
+                window.matchMedia("(display-mode: fullscreen)").matches
+            )
         ) {
-
             return true;
-
         }
 
-
-        /* -----------------------------------------------
-           FULLSCREEN
-        ----------------------------------------------- */
-
-        if (
-            window.matchMedia &&
-            window.matchMedia(
-                "(display-mode: fullscreen)"
-            ).matches
-        ) {
-
-            return true;
-
-        }
-
-
-        /* -----------------------------------------------
-           IOS
-        ----------------------------------------------- */
-
-        if (
+        return Boolean(
             window.navigator &&
             window.navigator.standalone === true
-        ) {
-
-            return true;
-
-        }
-
-
-        return false;
-
+        );
     }
 
+    function rememberInstallation() {
+        try {
+            localStorage.setItem(installedKey, "true");
+        } catch (error) {
+            console.log("Installation status could not be saved.");
+        }
 
-    /* =====================================================
-       REMOVE ALL KULZZY INSTALL SCREENS
-    ===================================================== */
+        const startup = document.getElementById(
+            "kulzzyImmediateStartup"
+        );
 
-    function removeInstallScreens() {
+        if (startup) {
+            startup.remove();
+        }
+    }
 
-        var startup =
-            document.getElementById(
+    function isIOS() {
+        return /iphone|ipad|ipod/i.test(
+            navigator.userAgent || ""
+        );
+    }
+
+    function isAndroid() {
+        return /android/i.test(
+            navigator.userAgent || ""
+        );
+    }
+
+    /*
+       Receive the browser's native installation prompt.
+    */
+    window.addEventListener("beforeinstallprompt", function (event) {
+        event.preventDefault();
+
+        deferredInstallPrompt = event;
+        window.kulzzyInstallPrompt = event;
+
+        console.log("Kulzzy Radio installation prompt is ready.");
+    });
+
+    /*
+       Called by the existing INSTALL APP button in index.html.
+    */
+    window.kulzzyInstallApp = async function () {
+        if (isInstalled()) {
+            rememberInstallation();
+            return;
+        }
+
+        if (deferredInstallPrompt) {
+            try {
+                deferredInstallPrompt.prompt();
+
+                const result = await deferredInstallPrompt.userChoice;
+
+                console.log(
+                    "Kulzzy Radio installation result:",
+                    result.outcome
+                );
+
+                if (result.outcome === "accepted") {
+                    rememberInstallation();
+                }
+            } catch (error) {
+                console.error("Installation prompt error:", error);
+
+                alert(
+                    "The installation prompt could not open. " +
+                    "Please use your browser menu to install Kulzzy Radio."
+                );
+            } finally {
+                deferredInstallPrompt = null;
+                window.kulzzyInstallPrompt = null;
+            }
+
+            return;
+        }
+
+        /*
+           iPhone and iPad installation is manual.
+        */
+        if (isIOS()) {
+            alert(
+                "TO INSTALL KULZZY RADIO ON IPHONE OR IPAD:\n\n" +
+                "1. Open this website in your browser.\n" +
+                "2. Tap the Share button.\n" +
+                "3. Choose Add to Home Screen.\n" +
+                "4. Enable Open as Web App if shown.\n" +
+                "5. Tap Add.\n\n" +
+                "If Add to Home Screen is missing, look under " +
+                "Edit Actions in the Share menu."
+            );
+
+            return;
+        }
+
+        /*
+           Android manual installation.
+        */
+        if (isAndroid()) {
+            alert(
+                "TO INSTALL KULZZY RADIO ON ANDROID:\n\n" +
+                "1. Open this website in Chrome or another supported browser.\n" +
+                "2. Tap the browser menu ⋮.\n" +
+                "3. Choose Install app or Add to Home screen.\n" +
+                "4. Follow the instructions shown by your phone.\n\n" +
+                "If the option is missing, update your browser " +
+                "and open the website directly rather than inside another app."
+            );
+
+            return;
+        }
+
+        /*
+           Desktop installation.
+        */
+        alert(
+            "TO INSTALL KULZZY RADIO ON YOUR COMPUTER:\n\n" +
+            "Open this website in a supported browser such as Chrome or Edge.\n" +
+            "Open the browser menu and choose Install Kulzzy Radio or Install.\n\n" +
+            "If the option is not available, the browser may not support " +
+            "installation on this device or the website may not meet its criteria."
+        );
+    };
+
+    /*
+       When installation succeeds, close the existing install screen.
+    */
+    window.addEventListener("appinstalled", function () {
+        deferredInstallPrompt = null;
+        window.kulzzyInstallPrompt = null;
+
+        rememberInstallation();
+
+        console.log("Kulzzy Radio was installed.");
+    });
+
+    /*
+       If the app is already running as an installed web app,
+       remove the startup installation screen.
+    */
+    function checkInstalledState() {
+        if (isInstalled()) {
+            const startup = document.getElementById(
                 "kulzzyImmediateStartup"
             );
 
-
-        if (startup) {
-
-            startup.remove();
-
-        }
-
-
-        var screen =
-            document.getElementById(
-                "kulzzyInstallScreen"
-            );
-
-
-        if (screen) {
-
-            screen.remove();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       REMEMBER INSTALLATION
-    ===================================================== */
-
-    function rememberInstallation() {
-
-        try {
-
-            localStorage.setItem(
-                "kulzzyRadioInstalled",
-                "true"
-            );
-
-        }
-        catch (error) {
-
-            console.log(
-                "Kulzzy installation storage error:",
-                error
-            );
-
-        }
-
-
-        removeInstallScreens();
-
-    }
-
-
-    /* =====================================================
-       IOS CHECK
-    ===================================================== */
-
-    function isIOS() {
-
-        return /iphone|ipad|ipod/i.test(
-            navigator.userAgent
-        );
-
-    }
-
-
-    /* =====================================================
-       IOS SAFARI CHECK
-    ===================================================== */
-
-    function isIOSSafari() {
-
-        var ua =
-            navigator.userAgent ||
-            "";
-
-
-        var ios =
-            /iphone|ipad|ipod/i.test(ua);
-
-
-        var webkit =
-            /webkit/i.test(ua);
-
-
-        var chrome =
-            /crios/i.test(ua);
-
-
-        var firefox =
-            /fxios/i.test(ua);
-
-
-        return (
-            ios &&
-            webkit &&
-            !chrome &&
-            !firefox
-        );
-
-    }
-
-
-    /* =====================================================
-       ANDROID CHECK
-    ===================================================== */
-
-    function isAndroid() {
-
-        return /android/i.test(
-            navigator.userAgent
-        );
-
-    }
-
-
-    /* =====================================================
-       DESKTOP CHECK
-    ===================================================== */
-
-    function isDesktop() {
-
-        return !isAndroid() &&
-               !isIOS();
-
-    }
-
-
-    /* =====================================================
-       BEFORE INSTALL PROMPT
-    ===================================================== */
-
-    window.addEventListener(
-        "beforeinstallprompt",
-        function (event) {
-
-            event.preventDefault();
-
-            deferredInstallPrompt = event;
-
-            window.kulzzyInstallPrompt =
-                event;
-
-
-            var button =
-                document.getElementById(
-                    "kulzzyInstallButton"
-                );
-
-
-            if (button) {
-
-                button.innerHTML =
-                    "📲 INSTALL APP";
-
-                button.style.display =
-                    "block";
-
+            if (startup) {
+                startup.remove();
             }
-
-
-            var message =
-                document.getElementById(
-                    "kulzzyInstallMessage"
-                );
-
-
-            if (message) {
-
-                message.innerHTML =
-                    "Install Kulzzy Radio on your device for quick and easy access.";
-
-            }
-
-        },
-        false
-    );
-
-
-    /* =====================================================
-       CREATE INSTALL SCREEN
-    ===================================================== */
-
-    function createInstallScreen() {
-
-        if (isInstalled()) {
-
-            removeInstallScreens();
-
-            return;
-
         }
-
-
-        if (
-            document.getElementById(
-                "kulzzyInstallScreen"
-            )
-        ) {
-
-            return;
-
-        }
-
-
-        var screen =
-            document.createElement("div");
-
-
-        screen.id =
-            "kulzzyInstallScreen";
-
-
-        screen.innerHTML = `
-
-            <div class="kulzzyInstallBox">
-
-                <div class="kulzzyInstallImageWrap">
-
-                    <img
-                        src="./logo.jpg"
-                        class="kulzzyInstallImage"
-                        alt="Kulzzy Radio"
-                    >
-
-                </div>
-
-
-                <div class="kulzzyInstallTitle">
-                    INSTALL KULZZY RADIO
-                </div>
-
-
-                <div class="kulzzyInstallLive">
-                    🔴 JOIN US LIVE ON-AIR
-                </div>
-
-
-                <div
-                    id="kulzzyInstallMessage"
-                    class="kulzzyInstallMessage"
-                >
-                    Install Kulzzy Radio on your device for quick and easy access.
-                </div>
-
-
-                <button
-                    id="kulzzyInstallButton"
-                    class="kulzzyInstallButton"
-                    type="button"
-                >
-                    📲 INSTALL APP
-                </button>
-
-
-                <button
-                    id="kulzzyContinueButton"
-                    class="kulzzyContinueButton"
-                    type="button"
-                >
-                    CONTINUE TO KULZZY RADIO
-                </button>
-
-
-                <div
-                    id="kulzzyInstallHelp"
-                    class="kulzzyInstallHelp"
-                ></div>
-
-            </div>
-
-        `;
-
-
-        document.body.appendChild(screen);
-
-
-        addInstallStyles();
-
-
-        setupInstallButton();
-
-
-        setupContinueButton();
-
-
-        updateInstallScreen();
-
     }
 
-
-    /* =====================================================
-       INSTALL BUTTON
-    ===================================================== */
-
-    function setupInstallButton() {
-
-        var button =
-            document.getElementById(
-                "kulzzyInstallButton"
-            );
-
-
-        if (!button) {
-
-            return;
-
-        }
-
-
-        button.addEventListener(
-            "click",
-            async function () {
-
-
-                /* -----------------------------------------
-                   NATIVE PWA INSTALL PROMPT
-                ----------------------------------------- */
-
-                if (deferredInstallPrompt) {
-
-                    try {
-
-                        deferredInstallPrompt.prompt();
-
-
-                        var result =
-                            await deferredInstallPrompt.userChoice;
-
-
-                        if (
-                            result &&
-                            result.outcome ===
-                            "accepted"
-                        ) {
-
-                            rememberInstallation();
-
-                        }
-
-                    }
-
-                    catch (error) {
-
-                        console.log(
-                            "Kulzzy install error:",
-                            error
-                        );
-
-                    }
-
-
-                    deferredInstallPrompt =
-                        null;
-
-                    window.kulzzyInstallPrompt =
-                        null;
-
-                    return;
-
-                }
-
-
-                /* -----------------------------------------
-                   IOS
-                ----------------------------------------- */
-
-                if (isIOS()) {
-
-                    showIOSInstructions();
-
-                    return;
-
-                }
-
-
-                /* -----------------------------------------
-                   ANDROID
-                ----------------------------------------- */
-
-                if (isAndroid()) {
-
-                    showAndroidInstructions();
-
-                    return;
-
-                }
-
-
-                /* -----------------------------------------
-                   DESKTOP
-                ----------------------------------------- */
-
-                showDesktopInstructions();
-
-            },
-            false
-        );
-
-    }
-
-
-    /* =====================================================
-       CONTINUE BUTTON
-    ===================================================== */
-
-    function setupContinueButton() {
-
-        var button =
-            document.getElementById(
-                "kulzzyContinueButton"
-            );
-
-
-        if (!button) {
-
-            return;
-
-        }
-
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                closeInstallScreen();
-
-            },
-            false
-        );
-
-    }
-
-
-    /* =====================================================
-       UPDATE INSTALL SCREEN
-    ===================================================== */
-
-    function updateInstallScreen() {
-
-        var message =
-            document.getElementById(
-                "kulzzyInstallMessage"
-            );
-
-
-        var help =
-            document.getElementById(
-                "kulzzyInstallHelp"
-            );
-
-
-        if (!message || !help) {
-
-            return;
-
-        }
-
-
-        if (deferredInstallPrompt) {
-
-            message.innerHTML =
-                "Install Kulzzy Radio on your device for quick and easy access.";
-
-            help.innerHTML = "";
-
-            return;
-
-        }
-
-
-        if (isIOSSafari()) {
-
-            message.innerHTML =
-                "Install Kulzzy Radio directly from Safari.";
-
-            help.innerHTML =
-                "Tap the Share button and choose <b>Add to Home Screen</b>.";
-
-            return;
-
-        }
-
-
-        if (isIOS()) {
-
-            message.innerHTML =
-                "Install Kulzzy Radio from your browser's Share menu.";
-
-            help.innerHTML =
-                "Tap <b>Share</b> and choose <b>Add to Home Screen</b>.";
-
-            return;
-
-        }
-
-
-        if (isAndroid()) {
-
-            message.innerHTML =
-                "Your browser may show the installation option in its menu.";
-
-            help.innerHTML =
-                "Open your browser menu ⋮ and choose <b>Install app</b> or <b>Add to Home screen</b>.";
-
-            return;
-
-        }
-
-
-        message.innerHTML =
-            "Install Kulzzy Radio as an app from your browser.";
-
-        help.innerHTML =
-            "Open your browser menu and choose <b>Install</b> or <b>Install Kulzzy Radio</b>.";
-
-    }
-
-
-    /* =====================================================
-       ANDROID INSTRUCTIONS
-    ===================================================== */
-
-    function showAndroidInstructions() {
-
-        var message =
-            document.getElementById(
-                "kulzzyInstallMessage"
-            );
-
-
-        var help =
-            document.getElementById(
-                "kulzzyInstallHelp"
-            );
-
-
-        if (!message || !help) {
-
-            return;
-
-        }
-
-
-        message.innerHTML =
-            "Your browser has not provided the automatic installation button yet.";
-
-
-        help.innerHTML = `
-
-            <b>ANDROID INSTALL</b><br><br>
-
-            1. Open the browser menu ⋮<br>
-
-            2. Look for <b>Install app</b><br>
-
-            3. If you don't see that, choose
-               <b>Add to Home screen</b><br>
-
-            4. Follow the installation message.
-
-        `;
-
-    }
-
-
-    /* =====================================================
-       IOS INSTRUCTIONS
-    ===================================================== */
-
-    function showIOSInstructions() {
-
-        var message =
-            document.getElementById(
-                "kulzzyInstallMessage"
-            );
-
-
-        var help =
-            document.getElementById(
-                "kulzzyInstallHelp"
-            );
-
-
-        if (!message || !help) {
-
-            return;
-
-        }
-
-
-        message.innerHTML =
-            "Install Kulzzy Radio from the Share menu.";
-
-
-        help.innerHTML = `
-
-            <b>IPHONE / IPAD</b><br><br>
-
-            1. Tap the <b>Share</b> button<br>
-
-            2. Scroll down<br>
-
-            3. Tap <b>Add to Home Screen</b><br>
-
-            4. Tap <b>Add</b>
-
-        `;
-
-    }
-
-
-    /* =====================================================
-       DESKTOP INSTRUCTIONS
-    ===================================================== */
-
-    function showDesktopInstructions() {
-
-        var message =
-            document.getElementById(
-                "kulzzyInstallMessage"
-            );
-
-
-        var help =
-            document.getElementById(
-                "kulzzyInstallHelp"
-            );
-
-
-        if (!message || !help) {
-
-            return;
-
-        }
-
-
-        message.innerHTML =
-            "Install Kulzzy Radio directly from your browser.";
-
-
-        help.innerHTML = `
-
-            <b>COMPUTER INSTALL</b><br><br>
-
-            Open the browser menu and choose
-            <b>Install Kulzzy Radio</b> or
-            <b>Install</b>.
-
-        `;
-
-    }
-
-
-    /* =====================================================
-       CLOSE
-    ===================================================== */
-
-    function closeInstallScreen() {
-
-        var screen =
-            document.getElementById(
-                "kulzzyInstallScreen"
-            );
-
-
-        if (screen) {
-
-            screen.remove();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       STYLES
-    ===================================================== */
-
-    function addInstallStyles() {
-
-        if (
-            document.getElementById(
-                "kulzzyInstallStyles"
-            )
-        ) {
-
-            return;
-
-        }
-
-
-        var style =
-            document.createElement("style");
-
-
-        style.id =
-            "kulzzyInstallStyles";
-
-
-        style.textContent = `
-
-            #kulzzyInstallScreen{
-
-                position:fixed;
-
-                inset:0;
-
-                width:100%;
-
-                height:100%;
-
-                z-index:2147483647;
-
-                background:rgba(2,13,26,.96);
-
-                display:flex;
-
-                align-items:center;
-
-                justify-content:center;
-
-                padding:20px;
-
-                overflow:auto;
-
-            }
-
-
-            .kulzzyInstallBox{
-
-                width:100%;
-
-                max-width:430px;
-
-                background:#06152B;
-
-                border-radius:20px;
-
-                padding:24px;
-
-                text-align:center;
-
-                box-shadow:
-                    0 20px 60px
-                    rgba(0,0,0,.55);
-
-                border:1px solid
-                    rgba(255,255,255,.12);
-
-            }
-
-
-            .kulzzyInstallImageWrap{
-
-                width:100%;
-
-                display:flex;
-
-                justify-content:center;
-
-                margin-bottom:18px;
-
-            }
-
-
-            .kulzzyInstallImage{
-
-                width:150px;
-
-                height:150px;
-
-                object-fit:cover;
-
-                border-radius:18px;
-
-                display:block;
-
-            }
-
-
-            .kulzzyInstallTitle{
-
-                color:#FFD700;
-
-                font-size:27px;
-
-                font-weight:900;
-
-                line-height:1.15;
-
-                margin-bottom:8px;
-
-            }
-
-
-            .kulzzyInstallLive{
-
-                color:#ffffff;
-
-                font-size:17px;
-
-                font-weight:800;
-
-                margin-bottom:18px;
-
-            }
-
-
-            .kulzzyInstallMessage{
-
-                color:#ffffff;
-
-                font-size:15px;
-
-                line-height:1.5;
-
-                margin-bottom:14px;
-
-            }
-
-
-            .kulzzyInstallButton{
-
-                width:100%;
-
-                border:0;
-
-                border-radius:12px;
-
-                padding:15px;
-
-                margin-top:8px;
-
-                background:#FFD700;
-
-                color:#06152B;
-
-                font-size:17px;
-
-                font-weight:900;
-
-                cursor:pointer;
-
-            }
-
-
-            .kulzzyContinueButton{
-
-                width:100%;
-
-                border:1px solid
-                    rgba(255,255,255,.25);
-
-                border-radius:12px;
-
-                padding:14px;
-
-                margin-top:10px;
-
-                background:transparent;
-
-                color:#ffffff;
-
-                font-size:15px;
-
-                font-weight:800;
-
-                cursor:pointer;
-
-            }
-
-
-            .kulzzyInstallHelp{
-
-                color:#ffffff;
-
-                font-size:14px;
-
-                line-height:1.55;
-
-                margin-top:16px;
-
-            }
-
-
-            @media(max-width:480px){
-
-                .kulzzyInstallBox{
-
-                    padding:20px;
-
-                }
-
-
-                .kulzzyInstallImage{
-
-                    width:125px;
-
-                    height:125px;
-
-                }
-
-
-                .kulzzyInstallTitle{
-
-                    font-size:23px;
-
-                }
-
-            }
-
-        `;
-
-
-        document.head.appendChild(style);
-
-    }
-
-
-    /* =====================================================
-       APP INSTALLED
-    ===================================================== */
-
-    window.addEventListener(
-        "appinstalled",
-        function () {
-
-            deferredInstallPrompt =
-                null;
-
-
-            window.kulzzyInstallPrompt =
-                null;
-
-
-            rememberInstallation();
-
-        },
-        false
-    );
-
-
-    /* =====================================================
-       WAIT FOR PAGE
-    ===================================================== */
-
-    function startInstallSystem() {
-
-        if (isInstalled()) {
-
-            removeInstallScreens();
-
-            return;
-
-        }
-
-
-        createInstallScreen();
-
-    }
-
-
-    if (
-        document.readyState ===
-        "loading"
-    ) {
-
+    if (document.readyState === "loading") {
         document.addEventListener(
             "DOMContentLoaded",
-            startInstallSystem
+            checkInstalledState
         );
-
+    } else {
+        checkInstalledState();
     }
-    else {
-
-        startInstallSystem();
-
-    }
-
-
 })();
