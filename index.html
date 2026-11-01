@@ -3,194 +3,293 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#06152B">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-<link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png">
 
 <title>Kulzzy Radio Network</title>
 
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+
+<link rel="preconnect" href="https://kulzzy.github.io" crossorigin>
+<link rel="dns-prefetch" href="//kulzzy.github.io">
+
 <style>
-*{
-    box-sizing:border-box;
+* {
+    box-sizing: border-box;
 }
 
-html,body{
-    margin:0;
-    padding:0;
-    width:100%;
-    height:100%;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#020d1a;
-    overflow:hidden;
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #020d1a;
+    overflow: hidden;
 }
 
-/* =========================================
-   MAIN GITHUB NAVIGATION
-   ========================================= */
-
-#kulzzyMainNavigationFrame{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:calc(100vh - 210px);
-    height:calc(100dvh - 210px);
-    border:0;
-    display:block;
-    z-index:1000;
-    background:#020d1a;
+#kulzzyMainNavigationFrame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 210px);
+    height: calc(100dvh - 210px);
+    border: 0;
+    display: block;
+    z-index: 1000;
+    background: #020d1a;
 }
 
-/* =========================================
-   FLOATING RADIO PLAYER
-   ========================================= */
-
-#kulzzyFloatingRadio{
-    position:fixed;
-    left:0;
-    bottom:0;
-    width:100%;
-    z-index:999999999;
-    background:#020d1a;
-    border-top:4px solid #ffd000;
-    box-shadow:0 -5px 25px rgba(0,0,0,.65);
-    overflow:hidden;
+#kulzzyFloatingRadio {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 999999999;
+    background: #020d1a;
+    border-top: 4px solid #ffd000;
+    box-shadow: 0 -5px 25px rgba(0,0,0,.65);
+    overflow: hidden;
 }
 
-.kulzzyFloatRow{
-    width:100%;
-    display:flex;
-    align-items:stretch;
+.kulzzyFloatRow {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
 }
 
-.kulzzyFloatPlayer{
-    flex:1;
-    min-width:0;
-    height:206px;
-    background:#020d1a;
+.kulzzyFloatPlayer {
+    flex: 1;
+    min-width: 0;
+    height: 206px;
+    background: #020d1a;
 }
 
-.kulzzyFloatPlayer iframe{
-    width:100%;
-    height:100%;
-    border:0;
-    display:block;
+.kulzzyFloatPlayer iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
 }
 
-.kulzzyFloatListeners{
-    width:260px;
-    min-width:260px;
-    background:#020d1a;
-    border-left:2px solid #ffd000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:15px;
+.kulzzyFloatListeners {
+    width: 260px;
+    min-width: 260px;
+    background: #020d1a;
+    border-left: 2px solid #ffd000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 15px;
 }
 
-.kulzzyFloatListenerTitle{
-    color:white;
-    font-size:12px;
-    font-weight:bold;
-    white-space:nowrap;
+.kulzzyFloatListenerTitle {
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
 }
 
-.kulzzyFloatDot{
-    display:inline-block;
-    width:15px;
-    height:15px;
-    background:red;
-    border-radius:50%;
-    margin-right:7px;
-    animation:kulzzyFloatBlink 1s infinite;
+.kulzzyFloatDot {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background: red;
+    border-radius: 50%;
+    margin-right: 7px;
+    animation: kulzzyFloatBlink 1s infinite;
 }
 
-.kulzzyFloatNumber{
-    color:#ff0015;
-    font-size:65px;
-    font-weight:900;
-    line-height:1;
-    margin-top:12px;
+.kulzzyFloatNumber {
+    color: #ff0015;
+    font-size: 65px;
+    font-weight: 900;
+    line-height: 1;
+    margin-top: 12px;
 }
 
-@keyframes kulzzyFloatBlink{
-    0%,100%{
-        opacity:1;
-        box-shadow:0 0 6px red,0 0 15px red;
+@keyframes kulzzyFloatBlink {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 6px red, 0 0 15px red;
     }
-    50%{
-        opacity:.25;
-        box-shadow:0 0 10px red,0 0 25px red;
+
+    50% {
+        opacity: .25;
+        box-shadow: 0 0 10px red, 0 0 25px red;
     }
 }
 
-/* =========================================
-   MOBILE
-   ========================================= */
+/* MOBILE PHONES */
 
-@media(max-width:650px){
-
-    #kulzzyMainNavigationFrame{
-        height:calc(100vh - 200px);
-        height:calc(100dvh - 200px);
+@media (max-width: 650px) {
+    #kulzzyMainNavigationFrame {
+        height: calc(100vh - 200px);
+        height: calc(100dvh - 200px);
     }
 
-    #kulzzyFloatingRadio{
-        border-top-width:3px;
+    #kulzzyFloatingRadio {
+        border-top-width: 3px;
     }
 
-    .kulzzyFloatRow{
-        display:flex;
-        flex-direction:row;
-        align-items:stretch;
+    .kulzzyFloatPlayer {
+        width: 72%;
+        height: 197px;
+        flex: none;
     }
 
-    .kulzzyFloatPlayer{
-        width:72%;
-        height:197px;
-        flex:none;
+    .kulzzyFloatListeners {
+        width: 28%;
+        min-width: 28%;
+        padding: 8px 3px;
+        border-left: 2px solid #ffd000;
     }
 
-    .kulzzyFloatListeners{
-        width:28%;
-        min-width:28%;
-        padding:8px 3px;
-        border-left:2px solid #ffd000;
+    .kulzzyFloatListenerTitle {
+        font-size: 13px;
+        white-space: normal;
     }
 
-    .kulzzyFloatListenerTitle{
-        font-size:13px;
-        white-space:normal;
+    .kulzzyFloatDot {
+        width: 9px;
+        height: 9px;
+        margin-right: 3px;
     }
 
-    .kulzzyFloatDot{
-        width:9px;
-        height:9px;
-        margin-right:3px;
-    }
-
-    .kulzzyFloatNumber{
-        font-size:38px;
-        margin-top:8px;
+    .kulzzyFloatNumber {
+        font-size: 38px;
+        margin-top: 8px;
     }
 }
 
-@media(max-width:380px){
-
-    .kulzzyFloatPlayer{
-        height:192px;
+@media (max-width: 380px) {
+    .kulzzyFloatPlayer {
+        height: 192px;
     }
 
-    .kulzzyFloatListenerTitle{
-        font-size:12px;
+    .kulzzyFloatListenerTitle {
+        font-size: 12px;
     }
 
-    .kulzzyFloatNumber{
-        font-size:32px;
+    .kulzzyFloatNumber {
+        font-size: 32px;
+    }
+}
+
+/* INSTALL PROMPT */
+
+#kulzzyInstallDropdown {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 20px);
+    max-width: 420px;
+    z-index: 2147483647;
+    display: none;
+    padding: 12px;
+    border: 2px solid #ffd700;
+    border-radius: 14px;
+    background: #07152f;
+    color: #fff;
+    box-shadow: 0 5px 22px rgba(0,0,0,.55);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.4;
+}
+
+.kulzzyInstallPromptTitle {
+    color: #ffd700;
+    font-size: 16px;
+    font-weight: 900;
+    margin: 0 30px 4px 0;
+}
+
+.kulzzyInstallPromptText {
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.kulzzyInstallPromptActions {
+    display: flex;
+    gap: 8px;
+}
+
+.kulzzyInstallPromptActions button {
+    min-height: 42px;
+    flex: 1;
+    padding: 9px 7px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+
+#kulzzyInstallNow {
+    border: 0;
+    background: #ffd700;
+    color: #07152f;
+}
+
+#kulzzyInstallLater {
+    border: 1px solid #ffd700;
+    background: transparent;
+    color: #fff;
+}
+
+#kulzzyInstallClose {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+@media (max-width: 340px) {
+    #kulzzyInstallDropdown {
+        top: 5px;
+        padding: 10px;
+    }
+
+    .kulzzyInstallPromptTitle {
+        font-size: 14px;
+    }
+
+    .kulzzyInstallPromptText {
+        font-size: 12px;
+    }
+
+    .kulzzyInstallPromptActions button {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 380px) and (max-height: 640px) {
+    #kulzzyMainNavigationFrame {
+        height: calc(100vh - 166px);
+        height: calc(100dvh - 166px);
+    }
+
+    .kulzzyFloatPlayer {
+        height: 158px;
+    }
+
+    .kulzzyFloatListeners {
+        padding: 5px 2px;
+    }
+
+    .kulzzyFloatNumber {
+        font-size: 29px;
+        margin-top: 5px;
     }
 }
 </style>
@@ -198,230 +297,121 @@ html,body{
 
 <body>
 
-<!-- =========================================
-     APP INSTALL SCREEN
-     ========================================= -->
+<!-- OPTIONAL INSTALL PROMPT -->
 
-<div id="kulzzyImmediateStartup"
-style="
-position:fixed;
-inset:0;
-width:100%;
-height:100%;
-background:#020d1a;
-z-index:2147483646;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:20px;
-font-family:Arial,Helvetica,sans-serif;
-">
+<div id="kulzzyInstallDropdown" role="dialog"
+     aria-label="Install Kulzzy Radio">
 
-    <div style="
-    width:100%;
-    max-width:430px;
-    background:#07152f;
-    border:2px solid #ffd700;
-    border-radius:20px;
-    padding:28px 20px;
-    text-align:center;
-    box-shadow:0 0 30px rgba(0,0,0,.65);
-    ">
+    <button id="kulzzyInstallClose"
+            type="button"
+            aria-label="Close">&times;</button>
 
-        <img src="./logo.jpg"
-        style="
-        width:110px;
-        height:110px;
-        object-fit:cover;
-        border-radius:50%;
-        border:3px solid #ffd700;
-        margin-bottom:18px;
-        "
-        alt="Kulzzy Radio Network">
-
-        <div style="
-        color:#ffd700;
-        font-size:25px;
-        font-weight:900;
-        line-height:1.2;
-        margin-bottom:12px;
-        ">
-            INSTALL KULZZY RADIO
-        </div>
-
-        <div style="
-        color:white;
-        font-size:18px;
-        font-weight:bold;
-        margin-bottom:15px;
-        ">
-            🔴 JOIN US LIVE ON-AIR
-        </div>
-
-        <div style="
-        color:white;
-        font-size:14px;
-        line-height:1.6;
-        margin-bottom:22px;
-        ">
-            Install Kulzzy Radio on your phone, tablet or computer for quick access.
-        </div>
-
-        <button id="kulzzyImmediateInstallButton"
-        type="button"
-        style="
-        width:100%;
-        border:none;
-        border-radius:12px;
-        background:#ffd700;
-        color:#07152f;
-        font-size:17px;
-        font-weight:900;
-        padding:15px;
-        cursor:pointer;
-        margin-bottom:12px;
-        ">
-            📲 INSTALL APP
-        </button>
-
-        <button id="kulzzyImmediateContinueButton"
-        type="button"
-        style="
-        width:100%;
-        border:2px solid #ffd700;
-        border-radius:12px;
-        background:transparent;
-        color:white;
-        font-size:15px;
-        font-weight:bold;
-        padding:13px;
-        cursor:pointer;
-        ">
-            CONTINUE TO KULZZY RADIO
-        </button>
-
-        <div style="
-        color:white;
-        font-size:12px;
-        line-height:1.6;
-        margin-top:18px;
-        ">
-            Android: Open your browser menu ⋮ and choose Install app or Add to Home screen.
-            <br><br>
-            iPhone/iPad: Tap Share and choose Add to Home Screen.
-        </div>
-
+    <div class="kulzzyInstallPromptTitle">
+        📻 INSTALL KULZZY RADIO
     </div>
+
+    <div class="kulzzyInstallPromptText">
+        Add Kulzzy Radio to your home screen for quick access.
+        You can continue using the website without installing.
+    </div>
+
+    <div class="kulzzyInstallPromptActions">
+        <button id="kulzzyInstallNow" type="button">
+            INSTALL APP
+        </button>
+
+        <button id="kulzzyInstallLater" type="button">
+            NOT NOW
+        </button>
+    </div>
+
 </div>
 
 <script>
-/* =========================================
-   INSTALL SCREEN
-   ========================================= */
+(function () {
+    "use strict";
 
-(function(){
+    var box = document.getElementById("kulzzyInstallDropdown");
 
-    var startup =
-        document.getElementById("kulzzyImmediateStartup");
+    function hidePrompt() {
+        box.style.display = "none";
 
-    var installed = false;
-
-    try{
-        installed =
-            localStorage.getItem("kulzzyRadioInstalled") === "true";
-    }catch(error){
-        installed = false;
+        try {
+            sessionStorage.setItem(
+                "kulzzyInstallPromptDismissed",
+                "1"
+            );
+        } catch (error) {}
     }
 
-    if(
-        window.matchMedia &&
-        (
-            window.matchMedia("(display-mode: standalone)").matches ||
-            window.matchMedia("(display-mode: fullscreen)").matches
-        )
-    ){
-        installed = true;
+    function isStandalone() {
+        try {
+            return (
+                (
+                    window.matchMedia &&
+                    window.matchMedia(
+                        "(display-mode: standalone)"
+                    ).matches
+                ) ||
+                navigator.standalone === true
+            );
+        } catch (error) {
+            return false;
+        }
     }
 
-    if(window.navigator && window.navigator.standalone === true){
-        installed = true;
-    }
+    document.getElementById("kulzzyInstallClose")
+        .addEventListener("click", hidePrompt);
 
-    if(installed){
-        if(startup) startup.remove();
-        return;
-    }
+    document.getElementById("kulzzyInstallLater")
+        .addEventListener("click", hidePrompt);
 
-    var installButton =
-        document.getElementById("kulzzyImmediateInstallButton");
-
-    var continueButton =
-        document.getElementById("kulzzyImmediateContinueButton");
-
-    if(continueButton){
-        continueButton.addEventListener("click",function(){
-            if(startup) startup.remove();
-        });
-    }
-
-    if(installButton){
-        installButton.addEventListener("click",function(){
-
-            if(typeof window.kulzzyInstallApp === "function"){
+    document.getElementById("kulzzyInstallNow")
+        .addEventListener("click", function () {
+            if (typeof window.kulzzyInstallApp === "function") {
                 window.kulzzyInstallApp();
-            }else{
+            } else {
                 alert(
-                    "Open your browser menu ⋮ and select " +
-                    "'Install app' or 'Add to Home screen'."
+                    "Open your browser menu and choose " +
+                    "Install app or Add to Home screen."
                 );
             }
-
         });
-    }
+
+    window.addEventListener("load", function () {
+        setTimeout(function () {
+            if (!box || isStandalone()) {
+                return;
+            }
+
+            try {
+                if (
+                    sessionStorage.getItem(
+                        "kulzzyInstallPromptDismissed"
+                    ) === "1"
+                ) {
+                    return;
+                }
+            } catch (error) {}
+
+            box.style.display = "block";
+        }, 2500);
+    });
 
 })();
 </script>
 
-<!-- =========================================
-     MAIN NAVIGATION BAR
-     This is the ONLY navigation in the app.
-     The URL is refreshed each time the app loads.
-     ========================================= -->
+<!-- MAIN NAVIGATION BAR -->
 
 <iframe
-id="kulzzyMainNavigationFrame"
-title="Kulzzy Radio Main Navigation"
-src="https://kulzzy.github.io/KRN-NAVIGATION-BAR/"
-loading="eager"
-allow="autoplay; clipboard-write; encrypted-media; fullscreen"
-></iframe>
+    id="kulzzyMainNavigationFrame"
+    title="Kulzzy Radio Main Navigation"
+    src="https://kulzzy.github.io/KRN-NAVIGATION-BAR/"
+    loading="eager"
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen">
+</iframe>
 
-<script>
-/* =========================================
-   LOAD THE LATEST MAIN NAVIGATION
-   ========================================= */
-
-(function(){
-
-    var frame =
-        document.getElementById("kulzzyMainNavigationFrame");
-
-    if(!frame) return;
-
-    /*
-      A fresh query string helps the browser request
-      the latest published navigation page.
-    */
-    frame.src =
-        "https://kulzzy.github.io/KRN-NAVIGATION-BAR/?app_refresh=" +
-        Date.now();
-
-})();
-</script>
-
-<!-- =========================================
-     FLOATING RADIO PLAYER
-     ========================================= -->
+<!-- FLOATING RADIO PLAYER -->
 
 <div id="kulzzyFloatingRadio">
 
@@ -429,15 +419,14 @@ allow="autoplay; clipboard-write; encrypted-media; fullscreen"
 
         <div class="kulzzyFloatPlayer">
             <iframe
-            src="https://kulzzy.github.io/KULZZY-AUTO-PLAYER/"
-            title="Kulzzy Radio Network Audio Player"
-            allow="autoplay"
-            scrolling="no">
+                src="https://kulzzy.github.io/KULZZY-AUTO-PLAYER/"
+                title="Kulzzy Radio Network Audio Player"
+                allow="autoplay"
+                scrolling="no">
             </iframe>
         </div>
 
         <div class="kulzzyFloatListeners">
-
             <div>
 
                 <div class="kulzzyFloatListenerTitle">
@@ -445,203 +434,145 @@ allow="autoplay; clipboard-write; encrypted-media; fullscreen"
                     OUR LISTENERS
                 </div>
 
-                <div
-                id="kulzzyFloatingListenerNumber"
-                class="kulzzyFloatNumber">
-                    0
-                </div>
+                <div id="kulzzyFloatingListenerNumber"
+                     class="kulzzyFloatNumber">0</div>
 
             </div>
-
         </div>
 
     </div>
 
 </div>
 
-<!-- =========================================
-     LISTENER DISPLAY
-     ========================================= -->
+<!-- LISTENER DISPLAY -->
 
 <script>
-(function(){
+(function () {
+    var count = Math.floor(Math.random() * 9000) + 1000;
 
-    var count =
-        Math.floor(Math.random() * 9000) + 1000;
+    var display = document.getElementById(
+        "kulzzyFloatingListenerNumber"
+    );
 
-    var display =
-        document.getElementById("kulzzyFloatingListenerNumber");
-
-    if(!display) return;
+    if (!display) return;
 
     display.textContent = count.toLocaleString();
 
-    setInterval(function(){
+    setInterval(function () {
+        var increase = Math.random() > 0.5;
+        var change = (Math.floor(Math.random() * 8) + 1) * 10;
 
-        var increase = Math.random() > .5;
-
-        var change =
-            (Math.floor(Math.random() * 8) + 1) * 10;
-
-        if(increase){
+        if (increase) {
             count += change;
-        }else{
+        } else {
             count -= change;
         }
 
-        if(count < 1000) count = 1000;
-        if(count > 9999) count = 9999;
+        if (count < 1000) count = 1000;
+        if (count > 9999) count = 9999;
 
         display.textContent = count.toLocaleString();
-
-    },4000);
-
+    }, 4000);
 })();
 </script>
 
-<!-- =========================================
-     PWA INSTALLATION AND AUTOMATIC UPDATES
-     ========================================= -->
+<!-- PWA INSTALLATION AND AUTOMATIC UPDATES -->
 
 <script>
 let kulzzyInstallPrompt = null;
 
-window.addEventListener("beforeinstallprompt",function(event){
-
+window.addEventListener("beforeinstallprompt", function (event) {
     event.preventDefault();
     kulzzyInstallPrompt = event;
-
-    console.log("Kulzzy Radio installation prompt ready");
-
 });
 
-if("serviceWorker" in navigator){
-
-    window.addEventListener("load",async function(){
-
-        try{
-
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", async function () {
+        try {
             const registration =
-                await navigator.serviceWorker.register("./sw.js",{
-                    scope:"./"
+                await navigator.serviceWorker.register("./sw.js", {
+                    scope: "./"
                 });
-
-            console.log("Kulzzy Radio Service Worker registered");
 
             registration.update();
 
-            setInterval(function(){
+            setInterval(function () {
                 registration.update();
-            },60000);
+            }, 60000);
 
-            registration.addEventListener("updatefound",function(){
-
+            registration.addEventListener("updatefound", function () {
                 const newWorker = registration.installing;
 
-                if(!newWorker) return;
+                if (!newWorker) return;
 
-                newWorker.addEventListener("statechange",function(){
-
-                    if(
+                newWorker.addEventListener("statechange", function () {
+                    if (
                         newWorker.state === "installed" &&
                         navigator.serviceWorker.controller
-                    ){
-
+                    ) {
                         newWorker.postMessage({
-                            type:"SKIP_WAITING"
+                            type: "SKIP_WAITING"
                         });
-
                     }
-
                 });
-
             });
 
-        }catch(error){
-
+        } catch (error) {
             console.error(
                 "Service Worker registration failed:",
                 error
             );
-
         }
-
     });
-
 }
 
 let kulzzyRefreshing = false;
 
-if("serviceWorker" in navigator){
-
+if ("serviceWorker" in navigator) {
     navigator.serviceWorker.addEventListener(
         "controllerchange",
-        function(){
-
-            if(kulzzyRefreshing) return;
+        function () {
+            if (kulzzyRefreshing) return;
 
             kulzzyRefreshing = true;
-
             window.location.reload();
-
         }
     );
-
 }
 
-window.kulzzyInstallApp = async function(){
-
-    if(!kulzzyInstallPrompt){
-
+window.kulzzyInstallApp = async function () {
+    if (!kulzzyInstallPrompt) {
         alert(
-            "If the Install App option is not showing, " +
-            "open Chrome menu ⋮ and select " +
+            "Open your browser menu ⋮ and select " +
             "'Install app' or 'Add to Home screen'."
         );
-
         return;
     }
 
-    try{
-
+    try {
         kulzzyInstallPrompt.prompt();
 
-        const choice =
-            await kulzzyInstallPrompt.userChoice;
+        const choice = await kulzzyInstallPrompt.userChoice;
 
-        console.log("Installation:",choice.outcome);
+        console.log("Installation:", choice.outcome);
 
         kulzzyInstallPrompt = null;
 
-    }catch(error){
-
-        console.error("Installation error:",error);
-
+    } catch (error) {
+        console.error("Installation error:", error);
     }
-
 };
 
-window.addEventListener("appinstalled",function(){
-
+window.addEventListener("appinstalled", function () {
     kulzzyInstallPrompt = null;
 
-    try{
-
-        localStorage.setItem(
-            "kulzzyRadioInstalled",
-            "true"
-        );
-
-    }catch(error){
-
-        console.log("Could not save installation state");
-
-    }
-
-    console.log("Kulzzy Radio installed successfully");
-
+    try {
+        localStorage.setItem("kulzzyRadioInstalled", "true");
+    } catch (error) {}
 });
 </script>
+
+<!-- PRESERVE EXISTING INSTALL SUPPORT -->
 
 <script src="./install.js"></script>
 
