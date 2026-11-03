@@ -83,7 +83,17 @@ html, body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 15px;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.kulzzyFloatListeners > div {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .kulzzyFloatListenerTitle {
@@ -91,6 +101,7 @@ html, body {
     font-size: 12px;
     font-weight: bold;
     white-space: nowrap;
+    line-height: 1;
 }
 
 .kulzzyFloatDot {
@@ -101,6 +112,7 @@ html, body {
     border-radius: 50%;
     margin-right: 7px;
     animation: kulzzyFloatBlink 1s infinite;
+    vertical-align: middle;
 }
 
 .kulzzyFloatNumber {
@@ -108,7 +120,7 @@ html, body {
     font-size: 65px;
     font-weight: 900;
     line-height: 1;
-    margin-top: 12px;
+    margin-top: 5px;
 }
 
 @keyframes kulzzyFloatBlink {
@@ -144,24 +156,26 @@ html, body {
     .kulzzyFloatListeners {
         width: 28%;
         min-width: 28%;
-        padding: 8px 3px;
+        padding: 0 2px;
         border-left: 2px solid #ffd000;
     }
 
     .kulzzyFloatListenerTitle {
-        font-size: 13px;
-        white-space: normal;
+        font-size: clamp(8px, 2.5vw, 12px);
+        white-space: nowrap;
+        line-height: 1;
     }
 
     .kulzzyFloatDot {
-        width: 9px;
-        height: 9px;
-        margin-right: 3px;
+        width: 8px;
+        height: 8px;
+        margin-right: 2px;
     }
 
     .kulzzyFloatNumber {
-        font-size: 38px;
-        margin-top: 8px;
+        font-size: clamp(25px, 8vw, 38px);
+        margin-top: 5px;
+        line-height: 1;
     }
 }
 
@@ -171,11 +185,11 @@ html, body {
     }
 
     .kulzzyFloatListenerTitle {
-        font-size: 12px;
+        font-size: 8px;
     }
 
     .kulzzyFloatNumber {
-        font-size: 32px;
+        font-size: 29px;
     }
 }
 
@@ -284,12 +298,12 @@ html, body {
     }
 
     .kulzzyFloatListeners {
-        padding: 5px 2px;
+        padding: 0 2px;
     }
 
     .kulzzyFloatNumber {
-        font-size: 29px;
-        margin-top: 5px;
+        font-size: 27px;
+        margin-top: 4px;
     }
 }
 </style>
