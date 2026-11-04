@@ -14,688 +14,350 @@
 <link rel="dns-prefetch" href="//kulzzy.github.io">
 
 <style>
-* {
-    box-sizing: border-box;
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #020d1a;
-    overflow: hidden;
-}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif;background:#020d1a;overflow:hidden}
 
 /* MAIN NAVIGATION */
-
-#kulzzyMainNavigationFrame {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: calc(100vh - 115px);
-    height: calc(100dvh - 115px);
-    border: 0;
-    display: block;
-    z-index: 1000;
-    background: #020d1a;
+#kulzzyMainNavigationFrame{
+ position:fixed;top:0;left:0;width:100%;
+ height:calc(100vh - 115px);height:calc(100dvh - 115px);
+ border:0;display:block;z-index:1000;background:#020d1a
 }
 
 /* BOTTOM PLAYER AND LISTENERS BAR */
-
-#kulzzyFloatingRadio {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    z-index: 999999999;
-    background: #020d1a;
-    border-top: 3px solid #ffd000;
-    box-shadow: 0 -5px 20px rgba(0,0,0,.55);
-    overflow: hidden;
+#kulzzyFloatingRadio{
+ position:fixed;left:0;bottom:0;width:100%;z-index:999999999;
+ background:#020d1a;border-top:3px solid #ffd000;
+ box-shadow:0 -5px 20px rgba(0,0,0,.55);overflow:hidden
 }
-
-.kulzzyFloatRow {
-    width: 100%;
-    height: 112px;
-    display: flex;
-    align-items: stretch;
+.kulzzyFloatRow{width:100%;height:112px;display:flex;align-items:stretch}
+.kulzzyFloatPlayer{flex:1;min-width:0;height:112px;background:#020d1a;overflow:hidden}
+.kulzzyFloatPlayer iframe{width:100%;height:100%;border:0;display:block}
+.kulzzyFloatListeners{
+ width:260px;min-width:260px;height:112px;background:#020d1a;
+ border-left:2px solid #ffd000;display:flex;align-items:flex-start;
+ justify-content:center;text-align:center;padding:8px 5px 2px;overflow:hidden
 }
-
-.kulzzyFloatPlayer {
-    flex: 1;
-    min-width: 0;
-    height: 112px;
-    background: #020d1a;
-    overflow: hidden;
+.kulzzyFloatListeners>div{
+ width:100%;min-width:0;display:flex;flex-direction:column;
+ align-items:center;justify-content:flex-start
 }
-
-.kulzzyFloatPlayer iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
+.kulzzyFloatListenerTitle{color:white;font-size:12px;font-weight:bold;white-space:nowrap;line-height:1}
+.kulzzyFloatDot{
+ display:inline-block;width:11px;height:11px;background:red;border-radius:50%;
+ margin-right:5px;animation:kulzzyFloatBlink 1s infinite;vertical-align:middle
 }
-
-.kulzzyFloatListeners {
-    width: 260px;
-    min-width: 260px;
-    height: 112px;
-    background: #020d1a;
-    border-left: 2px solid #ffd000;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    text-align: center;
-    padding: 8px 5px 2px;
-    overflow: hidden;
-}
-
-.kulzzyFloatListeners > div {
-    width: 100%;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.kulzzyFloatListenerTitle {
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    white-space: nowrap;
-    line-height: 1;
-}
-
-.kulzzyFloatDot {
-    display: inline-block;
-    width: 11px;
-    height: 11px;
-    background: red;
-    border-radius: 50%;
-    margin-right: 5px;
-    animation: kulzzyFloatBlink 1s infinite;
-    vertical-align: middle;
-}
-
-.kulzzyFloatNumber {
-    color: #ff0015;
-    font-size: 48px;
-    font-weight: 900;
-    line-height: 1;
-    margin-top: 5px;
-}
-
-@keyframes kulzzyFloatBlink {
-    0%, 100% {
-        opacity: 1;
-        box-shadow: 0 0 6px red, 0 0 15px red;
-    }
-
-    50% {
-        opacity: .25;
-        box-shadow: 0 0 10px red, 0 0 25px red;
-    }
+.kulzzyFloatNumber{color:#ff0015;font-size:48px;font-weight:900;line-height:1;margin-top:5px}
+@keyframes kulzzyFloatBlink{
+ 0%,100%{opacity:1;box-shadow:0 0 6px red,0 0 15px red}
+ 50%{opacity:.25;box-shadow:0 0 10px red,0 0 25px red}
 }
 
 /* MOBILE PHONES */
-
-@media (max-width: 650px) {
-    #kulzzyMainNavigationFrame {
-        height: calc(100vh - 103px);
-        height: calc(100dvh - 103px);
-    }
-
-    #kulzzyFloatingRadio {
-        border-top-width: 3px;
-    }
-
-    .kulzzyFloatRow {
-        height: 100px;
-    }
-
-    .kulzzyFloatPlayer {
-        width: 72%;
-        height: 100px;
-        flex: none;
-    }
-
-    .kulzzyFloatListeners {
-        width: 28%;
-        min-width: 28%;
-        height: 100px;
-        padding: 7px 2px 1px;
-        border-left: 2px solid #ffd000;
-    }
-
-    .kulzzyFloatListenerTitle {
-        font-size: clamp(7px, 2.5vw, 11px);
-        white-space: nowrap;
-        line-height: 1;
-    }
-
-    .kulzzyFloatDot {
-        width: 7px;
-        height: 7px;
-        margin-right: 2px;
-    }
-
-    .kulzzyFloatNumber {
-        font-size: clamp(22px, 7.5vw, 34px);
-        margin-top: 5px;
-        line-height: 1;
-    }
+@media(max-width:650px){
+ #kulzzyMainNavigationFrame{height:calc(100vh - 103px);height:calc(100dvh - 103px)}
+ #kulzzyFloatingRadio{border-top-width:3px}
+ .kulzzyFloatRow{height:100px}
+ .kulzzyFloatPlayer{width:72%;height:100px;flex:none}
+ .kulzzyFloatListeners{
+  width:28%;min-width:28%;height:100px;padding:7px 2px 1px;
+  border-left:2px solid #ffd000
+ }
+ .kulzzyFloatListenerTitle{font-size:clamp(7px,2.5vw,11px);white-space:nowrap;line-height:1}
+ .kulzzyFloatDot{width:7px;height:7px;margin-right:2px}
+ .kulzzyFloatNumber{font-size:clamp(22px,7.5vw,34px);margin-top:5px;line-height:1}
 }
 
 /* SMALL PHONES */
-
-@media (max-width: 380px) {
-    #kulzzyMainNavigationFrame {
-        height: calc(100vh - 95px);
-        height: calc(100dvh - 95px);
-    }
-
-    .kulzzyFloatRow {
-        height: 92px;
-    }
-
-    .kulzzyFloatPlayer {
-        height: 92px;
-    }
-
-    .kulzzyFloatListeners {
-        height: 92px;
-        padding-top: 6px;
-    }
-
-    .kulzzyFloatListenerTitle {
-        font-size: 7px;
-    }
-
-    .kulzzyFloatNumber {
-        font-size: 25px;
-        margin-top: 4px;
-    }
+@media(max-width:380px){
+ #kulzzyMainNavigationFrame{height:calc(100vh - 95px);height:calc(100dvh - 95px)}
+ .kulzzyFloatRow{height:92px}
+ .kulzzyFloatPlayer{height:92px}
+ .kulzzyFloatListeners{height:92px;padding-top:6px}
+ .kulzzyFloatListenerTitle{font-size:7px}
+ .kulzzyFloatNumber{font-size:25px;margin-top:4px}
 }
 
 /* SHORT SMALL PHONES */
-
-@media (max-width: 380px) and (max-height: 640px) {
-    #kulzzyMainNavigationFrame {
-        height: calc(100vh - 89px);
-        height: calc(100dvh - 89px);
-    }
-
-    .kulzzyFloatRow {
-        height: 86px;
-    }
-
-    .kulzzyFloatPlayer {
-        height: 86px;
-    }
-
-    .kulzzyFloatListeners {
-        height: 86px;
-        padding-top: 5px;
-    }
-
-    .kulzzyFloatNumber {
-        font-size: 23px;
-        margin-top: 3px;
-    }
+@media(max-width:380px) and (max-height:640px){
+ #kulzzyMainNavigationFrame{height:calc(100vh - 89px);height:calc(100dvh - 89px)}
+ .kulzzyFloatRow{height:86px}
+ .kulzzyFloatPlayer{height:86px}
+ .kulzzyFloatListeners{height:86px;padding-top:5px}
+ .kulzzyFloatNumber{font-size:23px;margin-top:3px}
 }
 
 /* INSTALL PROMPT */
-
-#kulzzyInstallDropdown {
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 20px);
-    max-width: 420px;
-    z-index: 2147483647;
-    display: none;
-    padding: 12px;
-    border: 2px solid #ffd700;
-    border-radius: 14px;
-    background: #07152f;
-    color: #fff;
-    box-shadow: 0 5px 22px rgba(0,0,0,.55);
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.4;
+#kulzzyInstallDropdown{
+ position:fixed;top:10px;left:50%;transform:translateX(-50%);
+ width:calc(100% - 20px);max-width:420px;z-index:2147483000;
+ display:none;padding:12px;border:2px solid #ffd700;border-radius:14px;
+ background:#07152f;color:#fff;box-shadow:0 5px 22px rgba(0,0,0,.55);
+ font-family:Arial,Helvetica,sans-serif;line-height:1.4
+}
+.kulzzyInstallPromptTitle{color:#ffd700;font-size:16px;font-weight:900;margin:0 30px 4px 0}
+.kulzzyInstallPromptText{font-size:13px;margin-bottom:10px}
+.kulzzyInstallPromptActions{display:flex;gap:8px}
+.kulzzyInstallPromptActions button{
+ min-height:42px;flex:1;padding:9px 7px;border-radius:9px;
+ font-size:14px;font-weight:bold;cursor:pointer;overflow-wrap:anywhere
+}
+#kulzzyInstallNow{border:0;background:#ffd700;color:#07152f}
+#kulzzyInstallLater{border:1px solid #ffd700;background:transparent;color:#fff}
+#kulzzyInstallClose{
+ position:absolute;top:6px;right:8px;width:30px;height:30px;padding:0;
+ border:0;background:transparent;color:#fff;font-size:23px;cursor:pointer
+}
+@media(max-width:340px){
+ #kulzzyInstallDropdown{top:5px;padding:10px}
+ .kulzzyInstallPromptTitle{font-size:14px}
+ .kulzzyInstallPromptText{font-size:12px}
+ .kulzzyInstallPromptActions button{font-size:12px}
 }
 
-.kulzzyInstallPromptTitle {
-    color: #ffd700;
-    font-size: 16px;
-    font-weight: 900;
-    margin: 0 30px 4px 0;
+/* FULL-SCREEN CENTRAL LOGIN GATE */
+#kulzzyLoginGate{
+ position:fixed;inset:0;width:100%;height:100%;height:100dvh;
+ z-index:2147483647;background:#06152b;display:flex;
+ align-items:stretch;justify-content:center;overflow:hidden
 }
-
-.kulzzyInstallPromptText {
-    font-size: 13px;
-    margin-bottom: 10px;
+#kulzzyLoginFrame{width:100%;height:100%;border:0;display:block;background:#06152b}
+#kulzzyLoginChecking{
+ position:absolute;inset:0;display:flex;align-items:center;
+ justify-content:center;background:#06152b;color:#ffd000;
+ font-weight:bold;font-size:16px;text-align:center;padding:25px;
+ pointer-events:none
 }
-
-.kulzzyInstallPromptActions {
-    display: flex;
-    gap: 8px;
-}
-
-.kulzzyInstallPromptActions button {
-    min-height: 42px;
-    flex: 1;
-    padding: 9px 7px;
-    border-radius: 9px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    overflow-wrap: anywhere;
-}
-
-#kulzzyInstallNow {
-    border: 0;
-    background: #ffd700;
-    color: #07152f;
-}
-
-#kulzzyInstallLater {
-    border: 1px solid #ffd700;
-    background: transparent;
-    color: #fff;
-}
-
-#kulzzyInstallClose {
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: #fff;
-    font-size: 23px;
-    cursor: pointer;
-}
-
-@media (max-width: 340px) {
-    #kulzzyInstallDropdown {
-        top: 5px;
-        padding: 10px;
-    }
-
-    .kulzzyInstallPromptTitle {
-        font-size: 14px;
-    }
-
-    .kulzzyInstallPromptText {
-        font-size: 12px;
-    }
-
-    .kulzzyInstallPromptActions button {
-        font-size: 12px;
-    }
-}
-
-/* AUTHENTICATION CHECK SCREEN */
-
-#kulzzyAuthCheck {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2147483647;
-    background: #06152b;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 25px;
-    text-align: center;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-#kulzzyAuthCheckBox {
-    width: 100%;
-    max-width: 360px;
-    padding: 25px 18px;
-    border: 1px solid #ffd000;
-    border-radius: 17px;
-    background: #071d35;
-}
-
-#kulzzyAuthCheckTitle {
-    color: #ffd000;
-    font-size: 21px;
-    font-weight: 900;
-}
-
-#kulzzyAuthCheckMessage {
-    font-size: 14px;
-    line-height: 1.6;
-    margin-top: 12px;
-}
-
-#kulzzyAuthRetry {
-    display: none;
-    width: 100%;
-    margin-top: 18px;
-    padding: 13px;
-    border: 0;
-    border-radius: 10px;
-    background: #ffd000;
-    color: #06152b;
-    font-weight: bold;
-    font-size: 15px;
-}
+#kulzzyLoginGate.login-ready #kulzzyLoginChecking{display:none}
 </style>
 </head>
 
-<body style="visibility:hidden">
+<body>
 
-<!-- AUTHENTICATION CHECK -->
+<!-- THE APP IS HIDDEN UNTIL FIREBASE CONFIRMS LOGIN -->
+<div id="kulzzyAppShell" style="display:none">
 
-<div id="kulzzyAuthCheck" style="visibility:visible">
-    <div id="kulzzyAuthCheckBox">
-        <div id="kulzzyAuthCheckTitle">KULZZY RADIO</div>
-        <div id="kulzzyAuthCheckMessage">
-            Checking your account...
-        </div>
-        <button id="kulzzyAuthRetry" type="button"
-                onclick="location.reload()">
-            TRY AGAIN
-        </button>
-    </div>
-</div>
-
-<div id="kulzzyInstallDropdown" role="dialog"
-     aria-label="Install Kulzzy Radio">
-
-    <button id="kulzzyInstallClose"
-            type="button"
-            aria-label="Close">&times;</button>
-
-    <div class="kulzzyInstallPromptTitle">
-        📻 INSTALL KULZZY RADIO
-    </div>
-
-    <div class="kulzzyInstallPromptText">
-        Add Kulzzy Radio to your home screen for quick access.
-        You can continue using the website without installing.
-    </div>
-
-    <div class="kulzzyInstallPromptActions">
-        <button id="kulzzyInstallNow" type="button">
-            INSTALL APP
-        </button>
-
-        <button id="kulzzyInstallLater" type="button">
-            NOT NOW
-        </button>
-    </div>
+<div id="kulzzyInstallDropdown" role="dialog" aria-label="Install Kulzzy Radio">
+ <button id="kulzzyInstallClose" type="button" aria-label="Close">&times;</button>
+ <div class="kulzzyInstallPromptTitle">📻 INSTALL KULZZY RADIO</div>
+ <div class="kulzzyInstallPromptText">
+  Add Kulzzy Radio to your home screen for quick access.
+  You can continue using the website without installing.
+ </div>
+ <div class="kulzzyInstallPromptActions">
+  <button id="kulzzyInstallNow" type="button">INSTALL APP</button>
+  <button id="kulzzyInstallLater" type="button">NOT NOW</button>
+ </div>
 </div>
 
 <!-- MAIN NAVIGATION BAR -->
-
 <iframe
-    id="kulzzyMainNavigationFrame"
-    title="Kulzzy Radio Main Navigation"
-    src="https://kulzzy.github.io/KRN-NAVIGATION-BAR/"
-    loading="eager"
-    allow="autoplay; clipboard-write; encrypted-media; fullscreen">
+ id="kulzzyMainNavigationFrame"
+ title="Kulzzy Radio Main Navigation"
+ src="https://kulzzy.github.io/KRN-NAVIGATION-BAR/"
+ loading="eager"
+ allow="autoplay; clipboard-write; encrypted-media; fullscreen">
 </iframe>
 
 <!-- FLOATING RADIO PLAYER -->
-
 <div id="kulzzyFloatingRadio">
-    <div class="kulzzyFloatRow">
-
-        <div class="kulzzyFloatPlayer">
-            <iframe
-                src="https://kulzzy.github.io/KULZZY-AUTO-PLAYER/"
-                title="Kulzzy Radio Network Audio Player"
-                allow="autoplay"
-                scrolling="no">
-            </iframe>
-        </div>
-
-        <div class="kulzzyFloatListeners">
-            <div>
-
-                <div class="kulzzyFloatListenerTitle">
-                    <span class="kulzzyFloatDot"></span>
-                    OUR LISTENERS
-                </div>
-
-                <div id="kulzzyFloatingListenerNumber"
-                     class="kulzzyFloatNumber">0</div>
-
-            </div>
-        </div>
-
+ <div class="kulzzyFloatRow">
+  <div class="kulzzyFloatPlayer">
+   <iframe
+    src="https://kulzzy.github.io/KULZZY-AUTO-PLAYER/"
+    title="Kulzzy Radio Network Audio Player"
+    allow="autoplay"
+    scrolling="no">
+   </iframe>
+  </div>
+  <div class="kulzzyFloatListeners">
+   <div>
+    <div class="kulzzyFloatListenerTitle">
+     <span class="kulzzyFloatDot"></span> OUR LISTENERS
     </div>
+    <div id="kulzzyFloatingListenerNumber" class="kulzzyFloatNumber">0</div>
+   </div>
+  </div>
+ </div>
 </div>
 
-<!-- LISTENER DISPLAY -->
+</div><!-- END APP SHELL -->
+
+<!-- LOGIN PAGE COVERS THE ENTIRE APP -->
+<div id="kulzzyLoginGate">
+ <iframe
+  id="kulzzyLoginFrame"
+  title="Kulzzy Radio Secure Login"
+  src="https://kulzzy.github.io/KULZZY-RADIO-LOGIN/?embedded=1"
+  allow="autoplay">
+ </iframe>
+ <div id="kulzzyLoginChecking">SECURELY CHECKING YOUR KULZZY RADIO ACCOUNT...</div>
+</div>
 
 <script>
-(function () {
-    var count = Math.floor(Math.random() * 9000) + 1000;
-
-    var display = document.getElementById(
-        "kulzzyFloatingListenerNumber"
-    );
-
-    if (!display) return;
-
-    display.textContent = count.toLocaleString();
-
-    setInterval(function () {
-        var increase = Math.random() > 0.5;
-        var change = (Math.floor(Math.random() * 8) + 1) * 10;
-
-        if (increase) {
-            count += change;
-        } else {
-            count -= change;
-        }
-
-        if (count < 1000) count = 1000;
-        if (count > 9999) count = 9999;
-
-        display.textContent = count.toLocaleString();
-    }, 4000);
+/* LISTENER DISPLAY */
+(function(){
+ var count=Math.floor(Math.random()*9000)+1000;
+ var display=document.getElementById("kulzzyFloatingListenerNumber");
+ if(!display)return;
+ display.textContent=count.toLocaleString();
+ setInterval(function(){
+  var increase=Math.random()>.5;
+  var change=(Math.floor(Math.random()*8)+1)*10;
+  count+=increase?change:-change;
+  if(count<1000)count=1000;
+  if(count>9999)count=9999;
+  display.textContent=count.toLocaleString();
+ },4000);
 })();
 </script>
 
-<!-- CENTRAL FIREBASE LOGIN PROTECTION -->
-
+<!-- SHARED FIREBASE AUTH SESSION -->
 <script type="module">
-import {
-    initializeApp,
-    getApps
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {initializeApp,getApps} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,setPersistence,browserLocalPersistence}
+ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import {
-    getAuth,
-    onAuthStateChanged,
-    setPersistence,
-    browserLocalPersistence
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyBH85NGWsSA5KcubbPdnmunwYZFZpj_CB0",
-    authDomain: "kulzzy-radio-chat.firebaseapp.com",
-    databaseURL: "https://kulzzy-radio-chat-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "kulzzy-radio-chat",
-    storageBucket: "kulzzy-radio-chat.firebasestorage.app",
-    messagingSenderId: "510100635134",
-    appId: "1:510100635134:web:9d3b2e983eb6e9a385d4af"
+const firebaseConfig={
+ apiKey:"AIzaSyBH85NGWsSA5KcubbPdnmunwYZFZpj_CB0",
+ authDomain:"kulzzy-radio-chat.firebaseapp.com",
+ databaseURL:"https://kulzzy-radio-chat-default-rtdb.europe-west1.firebasedatabase.app",
+ projectId:"kulzzy-radio-chat",
+ storageBucket:"kulzzy-radio-chat.firebasestorage.app",
+ messagingSenderId:"510100635134",
+ appId:"1:510100635134:web:9d3b2e983eb6e9a385d4af"
 };
 
-const LOGIN_URL =
-    "https://kulzzy.github.io/KULZZY-RADIO-LOGIN/";
+const gate=document.getElementById("kulzzyLoginGate");
+const shell=document.getElementById("kulzzyAppShell");
+const loginFrame=document.getElementById("kulzzyLoginFrame");
+let authReady=false;
 
-const authMessage =
-    document.getElementById("kulzzyAuthCheckMessage");
-
-const retryButton =
-    document.getElementById("kulzzyAuthRetry");
-
-const authScreen =
-    document.getElementById("kulzzyAuthCheck");
-
-function showError(message) {
-    authMessage.textContent = message;
-    retryButton.style.display = "block";
+function openApp(){
+ authReady=true;
+ shell.style.display="block";
+ gate.style.display="none";
 }
 
-try {
-    const existingApp = getApps().find(
-        app => app.name === "[DEFAULT]"
-    );
+function showLogin(){
+ shell.style.display="none";
+ gate.style.display="flex";
+ gate.classList.add("login-ready");
+}
 
-    const firebaseApp = existingApp ||
-        initializeApp(firebaseConfig);
+try{
+ const app=getApps().find(a=>a.name==="[DEFAULT]")||initializeApp(firebaseConfig);
+ const auth=getAuth(app);
+ await setPersistence(auth,browserLocalPersistence);
 
-    const auth = getAuth(firebaseApp);
+ onAuthStateChanged(auth,user=>{
+  if(user)openApp();
+  else showLogin();
+ });
 
-    await setPersistence(auth, browserLocalPersistence);
+ /* The embedded login page sends this message after successful sign-in.
+    The parent still waits for Firebase's own auth-state confirmation. */
+ window.addEventListener("message",event=>{
+  if(event.origin!=="https://kulzzy.github.io")return;
+  if(!event.data||event.data.type!=="KULZZY_AUTH_SUCCESS")return;
+  if(auth.currentUser)openApp();
+ });
 
-    onAuthStateChanged(auth, function(user) {
-
-        if (user) {
-            authScreen.remove();
-            document.body.style.visibility = "visible";
-            return;
-        }
-
-        const returnAddress = location.href;
-
-        const loginAddress =
-            LOGIN_URL +
-            "?return=" +
-            encodeURIComponent(returnAddress);
-
-        location.replace(loginAddress);
-    }, function(error) {
-        console.error("Kulzzy authentication error:", error);
-
-        showError(
-            "We could not verify your account. " +
-            "Please check your internet connection and try again."
-        );
-    });
-
-} catch (error) {
-    console.error("Kulzzy login protection error:", error);
-
-    showError(
-        "Unable to connect to the account system. " +
-        "Please check your internet connection and try again."
-    );
+ loginFrame.addEventListener("load",()=>{
+  gate.classList.add("login-ready");
+ });
+}catch(error){
+ console.error("Kulzzy authentication error:",error);
+ document.getElementById("kulzzyLoginChecking").textContent=
+  "Unable to check your account. Please refresh and try again.";
 }
 </script>
 
 <!-- PWA INSTALLATION AND AUTOMATIC UPDATES -->
-
 <script>
-let kulzzyInstallPrompt = null;
+let kulzzyInstallPrompt=null;
 
-window.addEventListener("beforeinstallprompt", function (event) {
-    event.preventDefault();
-    kulzzyInstallPrompt = event;
+window.addEventListener("beforeinstallprompt",function(event){
+ event.preventDefault();
+ kulzzyInstallPrompt=event;
 });
 
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", async function () {
-        try {
-            const registration =
-                await navigator.serviceWorker.register("./sw.js", {
-                    scope: "./"
-                });
-
-            registration.update();
-
-            setInterval(function () {
-                registration.update();
-            }, 60000);
-
-            registration.addEventListener("updatefound", function () {
-                const newWorker = registration.installing;
-
-                if (!newWorker) return;
-
-                newWorker.addEventListener("statechange", function () {
-                    if (
-                        newWorker.state === "installed" &&
-                        navigator.serviceWorker.controller
-                    ) {
-                        newWorker.postMessage({
-                            type: "SKIP_WAITING"
-                        });
-                    }
-                });
-            });
-
-        } catch (error) {
-            console.error(
-                "Service Worker registration failed:",
-                error
-            );
-        }
+if("serviceWorker" in navigator){
+ window.addEventListener("load",async function(){
+  try{
+   const registration=await navigator.serviceWorker.register("./sw.js",{scope:"./"});
+   registration.update();
+   setInterval(function(){registration.update();},60000);
+   registration.addEventListener("updatefound",function(){
+    const newWorker=registration.installing;
+    if(!newWorker)return;
+    newWorker.addEventListener("statechange",function(){
+     if(newWorker.state==="installed"&&navigator.serviceWorker.controller){
+      newWorker.postMessage({type:"SKIP_WAITING"});
+     }
     });
+   });
+  }catch(error){
+   console.error("Service Worker registration failed:",error);
+  }
+ });
 }
 
-let kulzzyRefreshing = false;
-
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.addEventListener(
-        "controllerchange",
-        function () {
-            if (kulzzyRefreshing) return;
-
-            kulzzyRefreshing = true;
-            window.location.reload();
-        }
-    );
+let kulzzyRefreshing=false;
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.addEventListener("controllerchange",function(){
+  if(kulzzyRefreshing)return;
+  kulzzyRefreshing=true;
+  window.location.reload();
+ });
 }
 
-window.kulzzyInstallApp = async function () {
-    if (!kulzzyInstallPrompt) {
-        alert(
-            "Open your browser menu ⋮ and select " +
-            "'Install app' or 'Add to Home screen'."
-        );
-        return;
-    }
-
-    try {
-        kulzzyInstallPrompt.prompt();
-
-        const choice = await kulzzyInstallPrompt.userChoice;
-
-        console.log("Installation:", choice.outcome);
-
-        kulzzyInstallPrompt = null;
-
-    } catch (error) {
-        console.error("Installation error:", error);
-    }
+window.kulzzyInstallApp=async function(){
+ if(!kulzzyInstallPrompt){
+  alert("Open your browser menu ⋮ and select 'Install app' or 'Add to Home screen'.");
+  return;
+ }
+ try{
+  kulzzyInstallPrompt.prompt();
+  const choice=await kulzzyInstallPrompt.userChoice;
+  console.log("Installation:",choice.outcome);
+  kulzzyInstallPrompt=null;
+ }catch(error){
+  console.error("Installation error:",error);
+ }
 };
 
-window.addEventListener("appinstalled", function () {
-    kulzzyInstallPrompt = null;
-
-    try {
-        localStorage.setItem("kulzzyRadioInstalled", "true");
-    } catch (error) {}
+window.addEventListener("appinstalled",function(){
+ kulzzyInstallPrompt=null;
+ try{localStorage.setItem("kulzzyRadioInstalled","true");}catch(error){}
 });
+
+(function(){
+ const box=document.getElementById("kulzzyInstallDropdown");
+ function hidePrompt(){
+  box.style.display="none";
+  try{sessionStorage.setItem("kulzzyInstallPromptDismissed","1");}catch(error){}
+ }
+ function isStandalone(){
+  try{
+   return (window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||
+    navigator.standalone===true;
+  }catch(error){return false;}
+ }
+ document.getElementById("kulzzyInstallClose").addEventListener("click",hidePrompt);
+ document.getElementById("kulzzyInstallLater").addEventListener("click",hidePrompt);
+ document.getElementById("kulzzyInstallNow").addEventListener("click",function(){
+  if(typeof window.kulzzyInstallApp==="function")window.kulzzyInstallApp();
+  else alert("Open your browser menu and choose Install app or Add to Home screen.");
+ });
+ window.addEventListener("load",function(){
+  setTimeout(function(){
+   if(!box||isStandalone()||!authReady)return;
+   try{if(sessionStorage.getItem("kulzzyInstallPromptDismissed")==="1")return;}catch(error){}
+   box.style.display="block";
+  },2500);
+ });
+})();
 </script>
 
 <script src="./install.js"></script>
