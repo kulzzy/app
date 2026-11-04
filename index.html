@@ -341,10 +341,77 @@ html, body {
         font-size: 12px;
     }
 }
+
+/* AUTHENTICATION CHECK SCREEN */
+
+#kulzzyAuthCheck {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2147483647;
+    background: #06152b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    text-align: center;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#kulzzyAuthCheckBox {
+    width: 100%;
+    max-width: 360px;
+    padding: 25px 18px;
+    border: 1px solid #ffd000;
+    border-radius: 17px;
+    background: #071d35;
+}
+
+#kulzzyAuthCheckTitle {
+    color: #ffd000;
+    font-size: 21px;
+    font-weight: 900;
+}
+
+#kulzzyAuthCheckMessage {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 12px;
+}
+
+#kulzzyAuthRetry {
+    display: none;
+    width: 100%;
+    margin-top: 18px;
+    padding: 13px;
+    border: 0;
+    border-radius: 10px;
+    background: #ffd000;
+    color: #06152b;
+    font-weight: bold;
+    font-size: 15px;
+}
 </style>
 </head>
 
-<body>
+<body style="visibility:hidden">
+
+<!-- AUTHENTICATION CHECK -->
+
+<div id="kulzzyAuthCheck" style="visibility:visible">
+    <div id="kulzzyAuthCheckBox">
+        <div id="kulzzyAuthCheckTitle">KULZZY RADIO</div>
+        <div id="kulzzyAuthCheckMessage">
+            Checking your account...
+        </div>
+        <button id="kulzzyAuthRetry" type="button"
+                onclick="location.reload()">
+            TRY AGAIN
+        </button>
+    </div>
+</div>
 
 <div id="kulzzyInstallDropdown" role="dialog"
      aria-label="Install Kulzzy Radio">
@@ -372,80 +439,6 @@ html, body {
         </button>
     </div>
 </div>
-
-<script>
-(function () {
-    "use strict";
-
-    var box = document.getElementById("kulzzyInstallDropdown");
-
-    function hidePrompt() {
-        box.style.display = "none";
-
-        try {
-            sessionStorage.setItem(
-                "kulzzyInstallPromptDismissed",
-                "1"
-            );
-        } catch (error) {}
-    }
-
-    function isStandalone() {
-        try {
-            return (
-                (
-                    window.matchMedia &&
-                    window.matchMedia(
-                        "(display-mode: standalone)"
-                    ).matches
-                ) ||
-                navigator.standalone === true
-            );
-        } catch (error) {
-            return false;
-        }
-    }
-
-    document.getElementById("kulzzyInstallClose")
-        .addEventListener("click", hidePrompt);
-
-    document.getElementById("kulzzyInstallLater")
-        .addEventListener("click", hidePrompt);
-
-    document.getElementById("kulzzyInstallNow")
-        .addEventListener("click", function () {
-            if (typeof window.kulzzyInstallApp === "function") {
-                window.kulzzyInstallApp();
-            } else {
-                alert(
-                    "Open your browser menu and choose " +
-                    "Install app or Add to Home screen."
-                );
-            }
-        });
-
-    window.addEventListener("load", function () {
-        setTimeout(function () {
-            if (!box || isStandalone()) {
-                return;
-            }
-
-            try {
-                if (
-                    sessionStorage.getItem(
-                        "kulzzyInstallPromptDismissed"
-                    ) === "1"
-                ) {
-                    return;
-                }
-            } catch (error) {}
-
-            box.style.display = "block";
-        }, 2500);
-    });
-
-})();
-</script>
 
 <!-- MAIN NAVIGATION BAR -->
 
@@ -518,6 +511,95 @@ html, body {
         display.textContent = count.toLocaleString();
     }, 4000);
 })();
+</script>
+
+<!-- CENTRAL FIREBASE LOGIN PROTECTION -->
+
+<script type="module">
+import {
+    initializeApp,
+    getApps
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    setPersistence,
+    browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBH85NGWsSA5KcubbPdnmunwYZFZpj_CB0",
+    authDomain: "kulzzy-radio-chat.firebaseapp.com",
+    databaseURL: "https://kulzzy-radio-chat-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "kulzzy-radio-chat",
+    storageBucket: "kulzzy-radio-chat.firebasestorage.app",
+    messagingSenderId: "510100635134",
+    appId: "1:510100635134:web:9d3b2e983eb6e9a385d4af"
+};
+
+const LOGIN_URL =
+    "https://kulzzy.github.io/KULZZY-RADIO-LOGIN/";
+
+const authMessage =
+    document.getElementById("kulzzyAuthCheckMessage");
+
+const retryButton =
+    document.getElementById("kulzzyAuthRetry");
+
+const authScreen =
+    document.getElementById("kulzzyAuthCheck");
+
+function showError(message) {
+    authMessage.textContent = message;
+    retryButton.style.display = "block";
+}
+
+try {
+    const existingApp = getApps().find(
+        app => app.name === "[DEFAULT]"
+    );
+
+    const firebaseApp = existingApp ||
+        initializeApp(firebaseConfig);
+
+    const auth = getAuth(firebaseApp);
+
+    await setPersistence(auth, browserLocalPersistence);
+
+    onAuthStateChanged(auth, function(user) {
+
+        if (user) {
+            authScreen.remove();
+            document.body.style.visibility = "visible";
+            return;
+        }
+
+        const returnAddress = location.href;
+
+        const loginAddress =
+            LOGIN_URL +
+            "?return=" +
+            encodeURIComponent(returnAddress);
+
+        location.replace(loginAddress);
+    }, function(error) {
+        console.error("Kulzzy authentication error:", error);
+
+        showError(
+            "We could not verify your account. " +
+            "Please check your internet connection and try again."
+        );
+    });
+
+} catch (error) {
+    console.error("Kulzzy login protection error:", error);
+
+    showError(
+        "Unable to connect to the account system. " +
+        "Please check your internet connection and try again."
+    );
+}
 </script>
 
 <!-- PWA INSTALLATION AND AUTOMATIC UPDATES -->
