@@ -21,61 +21,6 @@ html, body {
     overflow: hidden;
 }
 
-/* FULL SCREEN LOGIN PROTECTION */
-
-#kulzzyAuthGate {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    height: 100dvh;
-    z-index: 2147483647;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: #020d1a;
-    color: white;
-    text-align: center;
-}
-
-#kulzzyAuthGateBox {
-    width: 100%;
-    max-width: 360px;
-    padding: 25px 18px;
-    border: 2px solid #ffd000;
-    border-radius: 16px;
-    background: #07152f;
-    box-shadow: 0 10px 35px rgba(0,0,0,.5);
-}
-
-#kulzzyAuthGateTitle {
-    margin: 0 0 12px;
-    color: #ffd000;
-    font-size: 22px;
-    font-weight: 900;
-}
-
-#kulzzyAuthGateMessage {
-    margin: 0;
-    color: white;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-#kulzzyAuthRetry {
-    display: none;
-    width: 100%;
-    margin-top: 15px;
-    padding: 13px;
-    border: 0;
-    border-radius: 9px;
-    background: #ffd000;
-    color: #07152f;
-    font-size: 15px;
-    font-weight: bold;
-}
-
 /* MAIN NAVIGATION */
 
 #kulzzyMainNavigationFrame {
@@ -305,7 +250,7 @@ html, body {
     transform: translateX(-50%);
     width: calc(100% - 20px);
     max-width: 420px;
-    z-index: 2147483646;
+    z-index: 2147483647;
     display: none;
     padding: 12px;
     border: 2px solid #ffd700;
@@ -389,18 +334,7 @@ html, body {
         font-size: 12px;
     }
 }
-</style></head><body><!-- FULL SCREEN AUTHENTICATION GATE --><div id="kulzzyAuthGate">
-    <div id="kulzzyAuthGateBox">
-        <h2 id="kulzzyAuthGateTitle">KULZZY RADIO</h2>
-        <p id="kulzzyAuthGateMessage">
-            Checking your account. Please wait...
-        </p>
-        <button id="kulzzyAuthRetry" type="button"
-                onclick="location.reload()">
-            TRY AGAIN
-        </button>
-    </div>
-</div><!-- INSTALL PROMPT --><div id="kulzzyInstallDropdown" role="dialog"
+</style></head><body><!-- INSTALL PROMPT --><div id="kulzzyInstallDropdown" role="dialog"
      aria-label="Install Kulzzy Radio"><button id="kulzzyInstallClose"
         type="button"
         aria-label="Close">&times;</button>
@@ -484,19 +418,17 @@ html, body {
         display.textContent = count.toLocaleString();
     }, 4000);
 })();
-</script><!-- CENTRAL FIREBASE LOGIN PROTECTION --><script type="module">
+</script><!-- BACKGROUND FIREBASE LOGIN CHECK - NO SCREEN OVERLAY --><script type="module">
 import {
-    initializeApp,
-    getApps
+    initializeApp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
-    getAuth,
-    onAuthStateChanged
+    getAuth
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBH85NGWsSA5KcubbPdnmunwYZFZpj_CB0",
+    apiKey: "AIzaSyBH85NGWsSAK5cubbPdnmunwYZFZpj_CB0",
     authDomain: "kulzzy-radio-chat.firebaseapp.com",
     databaseURL: "https://kulzzy-radio-chat-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "kulzzy-radio-chat",
@@ -508,52 +440,32 @@ const firebaseConfig = {
 const LOGIN_URL =
     "https://kulzzy.github.io/KULZZY-RADIO-LOGIN/";
 
-const gate = document.getElementById("kulzzyAuthGate");
-const message = document.getElementById("kulzzyAuthGateMessage");
-const retry = document.getElementById("kulzzyAuthRetry");
+async function checkLogin() {
+    try {
+        const app = initializeApp(
+            firebaseConfig,
+            "kulzzy-main-login-check"
+        );
 
-function openLogin() {
-    const returnUrl = encodeURIComponent(location.href);
-    location.replace(LOGIN_URL + "?return=" + returnUrl);
-}
+        const auth = getAuth(app);
 
-try {
-    const app = getApps().length
-        ? getApps()[0]
-        : initializeApp(firebaseConfig);
+        await auth.authStateReady();
 
-    const auth = getAuth(app);
+        if (!auth.currentUser) {
+            const returnUrl = encodeURIComponent(location.href);
 
-    onAuthStateChanged(auth, function(user) {
-
-        if (user) {
-            gate.style.display = "none";
-            gate.remove();
-            return;
+            location.replace(LOGIN_URL + "?return=" + returnUrl);
         }
 
-        openLogin();
-
-    }, function(error) {
-
-        console.error("Kulzzy Radio authentication error:", error);
-
-        message.textContent =
-            "We could not verify your login. Check your internet connection and try again.";
-
-        retry.style.display = "block";
-
-    });
-
-} catch (error) {
-
-    console.error("Firebase authentication setup failed:", error);
-
-    message.textContent =
-        "Unable to connect to the login system. Please check your internet connection.";
-
-    retry.style.display = "block";
+    } catch (error) {
+        console.error(
+            "Kulzzy Radio login check failed:",
+            error
+        );
+    }
 }
+
+checkLogin();
 </script><!-- PWA INSTALLATION AND AUTOMATIC UPDATES --><script>
 let kulzzyInstallPrompt = null;
 
@@ -666,7 +578,9 @@ window.addEventListener("appinstalled", function () {
             return (
                 (
                     window.matchMedia &&
-                    window.matchMedia("(display-mode: standalone)").matches
+                    window.matchMedia(
+                        "(display-mode: standalone)"
+                    ).matches
                 ) ||
                 navigator.standalone === true
             );
