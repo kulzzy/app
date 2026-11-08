@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#06152B">
-
-<title>Kulzzy Radio Network</title>
-
-<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#06152B"><title>Kulzzy Radio Network</title><link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-<link rel="apple-touch-icon" href="./icon-192.png">
-
-<link rel="preconnect" href="https://kulzzy.github.io" crossorigin>
-<link rel="dns-prefetch" href="//kulzzy.github.io">
-
-<style>
+<link rel="apple-touch-icon" href="./icon-192.png"><link rel="preconnect" href="https://kulzzy.github.io" crossorigin>
+<link rel="dns-prefetch" href="//kulzzy.github.io"><style>
 * {
     box-sizing: border-box;
 }
@@ -200,255 +191,40 @@ body::before {
         font-size: 26px;
     }
 }
-
-/* INSTALL PROMPT */
-
-#kulzzyInstallDropdown {
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 20px);
-    max-width: 420px;
-    z-index: 2147483647;
-    display: none;
-    padding: 12px;
-    border: 2px solid #ffd700;
-    border-radius: 14px;
-    background: #07152f;
-    color: #fff;
-    box-shadow: 0 5px 22px rgba(0,0,0,.55);
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.4;
-}
-
-.kulzzyInstallPromptTitle {
-    color: #ffd700;
-    font-size: 16px;
-    font-weight: 900;
-    margin: 0 30px 4px 0;
-}
-
-.kulzzyInstallPromptText {
-    font-size: 13px;
-    margin-bottom: 10px;
-}
-
-.kulzzyInstallPromptActions {
-    display: flex;
-    gap: 8px;
-}
-
-.kulzzyInstallPromptActions button {
-    min-height: 42px;
-    flex: 1;
-    padding: 9px 7px;
-    border-radius: 9px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    overflow-wrap: anywhere;
-}
-
-#kulzzyInstallNow {
-    border: 0;
-    background: #ffd700;
-    color: #07152f;
-}
-
-#kulzzyInstallLater {
-    border: 1px solid #ffd700;
-    background: transparent;
-    color: #fff;
-}
-
-#kulzzyInstallClose {
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: #fff;
-    font-size: 23px;
-    cursor: pointer;
-}
-
-@media (max-width: 340px) {
-    #kulzzyInstallDropdown {
-        top: 5px;
-        padding: 10px;
-    }
-
-    .kulzzyInstallPromptTitle {
-        font-size: 14px;
-    }
-
-    .kulzzyInstallPromptText {
-        font-size: 12px;
-    }
-
-    .kulzzyInstallPromptActions button {
-        font-size: 12px;
-    }
-}
-</style>
-</head>
-
-<body>
-
-<!-- INSTALL PROMPT -->
-
-<div id="kulzzyInstallDropdown" role="dialog"
-     aria-label="Install Kulzzy Radio">
-
-    <button id="kulzzyInstallClose"
-            type="button"
-            aria-label="Close">&times;</button>
-
-    <div class="kulzzyInstallPromptTitle">
-        📻 INSTALL KULZZY RADIO
-    </div>
-
-    <div class="kulzzyInstallPromptText">
-        Add Kulzzy Radio to your home screen for quick access.
-        You can continue using the website without installing.
-    </div>
-
-    <div class="kulzzyInstallPromptActions">
-        <button id="kulzzyInstallNow" type="button">
-            INSTALL APP
-        </button>
-
-        <button id="kulzzyInstallLater" type="button">
-            NOT NOW
-        </button>
-    </div>
-
-</div>
-
-<script>
-(function () {
-    "use strict";
-
-    var box = document.getElementById("kulzzyInstallDropdown");
-
-    function hidePrompt() {
-        box.style.display = "none";
-
-        try {
-            sessionStorage.setItem(
-                "kulzzyInstallPromptDismissed",
-                "1"
-            );
-        } catch (error) {}
-    }
-
-    function isStandalone() {
-        try {
-            return (
-                (
-                    window.matchMedia &&
-                    window.matchMedia(
-                        "(display-mode: standalone)"
-                    ).matches
-                ) ||
-                navigator.standalone === true
-            );
-        } catch (error) {
-            return false;
-        }
-    }
-
-    document.getElementById("kulzzyInstallClose")
-        .addEventListener("click", hidePrompt);
-
-    document.getElementById("kulzzyInstallLater")
-        .addEventListener("click", hidePrompt);
-
-    document.getElementById("kulzzyInstallNow")
-        .addEventListener("click", function () {
-            if (typeof window.kulzzyInstallApp === "function") {
-                window.kulzzyInstallApp();
-            } else {
-                alert(
-                    "Open your browser menu and choose " +
-                    "Install app or Add to Home screen."
-                );
-            }
-        });
-
-    window.addEventListener("load", function () {
-        setTimeout(function () {
-            if (!box || isStandalone()) {
-                return;
-            }
-
-            try {
-                if (
-                    sessionStorage.getItem(
-                        "kulzzyInstallPromptDismissed"
-                    ) === "1"
-                ) {
-                    return;
-                }
-            } catch (error) {}
-
-            box.style.display = "block";
-        }, 2500);
-    });
-
-})();
-</script>
-
-<!-- MAIN NAVIGATION -->
-
-<iframe
+</style></head><body><!-- MAIN NAVIGATION --><iframe
     id="kulzzyMainNavigationFrame"
     title="Kulzzy Radio Main Navigation"
     src="https://kulzzy.github.io/KRN-NAVIGATION-BAR/"
     loading="eager"
     allow="autoplay; clipboard-write; encrypted-media; fullscreen">
-</iframe>
+</iframe><!-- FLOATING RADIO PLAYER --><div id="kulzzyFloatingRadio"><div class="kulzzyFloatRow">
 
-<!-- FLOATING RADIO PLAYER -->
+    <div class="kulzzyFloatPlayer">
+        <iframe
+            src="https://kulzzy.github.io/KULZZY-AUTO-PLAYER/"
+            title="Kulzzy Radio Network Audio Player"
+            allow="autoplay"
+            scrolling="no">
+        </iframe>
+    </div>
 
-<div id="kulzzyFloatingRadio">
+    <div class="kulzzyFloatListeners">
+        <div>
 
-    <div class="kulzzyFloatRow">
-
-        <div class="kulzzyFloatPlayer">
-            <iframe
-                src="https://kulzzy.github.io/KULZZY-AUTO-PLAYER/"
-                title="Kulzzy Radio Network Audio Player"
-                allow="autoplay"
-                scrolling="no">
-            </iframe>
-        </div>
-
-        <div class="kulzzyFloatListeners">
-            <div>
-
-                <div class="kulzzyFloatListenerTitle">
-                    <span class="kulzzyFloatDot"></span>
-                    OUR LISTENERS
-                </div>
-
-                <div id="kulzzyFloatingListenerNumber"
-                     class="kulzzyFloatNumber">0</div>
-
+            <div class="kulzzyFloatListenerTitle">
+                <span class="kulzzyFloatDot"></span>
+                OUR LISTENERS
             </div>
-        </div>
 
+            <div id="kulzzyFloatingListenerNumber"
+                 class="kulzzyFloatNumber">0</div>
+
+        </div>
     </div>
 
 </div>
 
-<!-- LISTENER DISPLAY -->
-
-<script>
+</div><!-- LISTENER DISPLAY --><script>
 (function () {
     var count = Math.floor(Math.random() * 9000) + 1000;
 
@@ -476,11 +252,7 @@ body::before {
         display.textContent = count.toLocaleString();
     }, 4000);
 })();
-</script>
-
-<!-- PWA INSTALLATION AND AUTOMATIC UPDATES -->
-
-<script>
+</script><!-- PWA INSTALLATION AND AUTOMATIC UPDATES --><script>
 let kulzzyInstallPrompt = null;
 
 window.addEventListener("beforeinstallprompt", function (event) {
@@ -572,9 +344,5 @@ window.addEventListener("appinstalled", function () {
         localStorage.setItem("kulzzyRadioInstalled", "true");
     } catch (error) {}
 });
-</script>
-
-<script src="./install.js"></script>
-
-</body>
+</script><script src="./install.js"></script></body>
 </html>
