@@ -2,7 +2,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#06152B"><title>Kulzzy Radio Network</title><link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#06152B">
+<title>Kulzzy Radio Network</title><link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png"><link rel="preconnect" href="https://kulzzy.github.io" crossorigin>
 <link rel="dns-prefetch" href="//kulzzy.github.io"><style>
@@ -204,19 +205,22 @@ body::before {
     title="Kulzzy Radio Main Navigation"
     src="https://kulzzy.github.io/KRN-NAVIGATION-BAR/"
     loading="eager"
-    allow="autoplay; clipboard-write; encrypted-media; fullscreen">
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; camera; microphone">
 </iframe><!-- FLOATING RADIO PLAYER --><div id="kulzzyFloatingRadio"><div class="kulzzyFloatRow">
 
     <div class="kulzzyFloatPlayer">
+
         <iframe
             src="https://kulzzy.github.io/KULZZY-AUTO-PLAYER/"
             title="Kulzzy Radio Network Audio Player"
             allow="autoplay"
             scrolling="no">
         </iframe>
+
     </div>
 
     <div class="kulzzyFloatListeners">
+
         <div>
 
             <div class="kulzzyFloatListenerTitle">
@@ -224,16 +228,19 @@ body::before {
                 OUR LISTENERS
             </div>
 
-            <div id="kulzzyFloatingListenerNumber"
-                 class="kulzzyFloatNumber">0</div>
+            <div
+                id="kulzzyFloatingListenerNumber"
+                class="kulzzyFloatNumber">0</div>
 
         </div>
+
     </div>
 
 </div>
 
 </div><!-- LISTENER DISPLAY --><script>
 (function () {
+
     var count = Math.floor(Math.random() * 9000) + 1000;
 
     var display = document.getElementById(
@@ -245,6 +252,7 @@ body::before {
     display.textContent = count.toLocaleString();
 
     setInterval(function () {
+
         var increase = Math.random() > 0.5;
         var change = (Math.floor(Math.random() * 8) + 1) * 10;
 
@@ -258,19 +266,26 @@ body::before {
         if (count > 9999) count = 9999;
 
         display.textContent = count.toLocaleString();
+
     }, 4000);
+
 })();
 </script><!-- PWA INSTALLATION AND AUTOMATIC UPDATES --><script>
 let kulzzyInstallPrompt = null;
 
 window.addEventListener("beforeinstallprompt", function (event) {
+
     event.preventDefault();
     kulzzyInstallPrompt = event;
+
 });
 
 if ("serviceWorker" in navigator) {
+
     window.addEventListener("load", async function () {
+
         try {
+
             const registration =
                 await navigator.serviceWorker.register("./sw.js", {
                     scope: "./"
@@ -283,55 +298,74 @@ if ("serviceWorker" in navigator) {
             }, 60000);
 
             registration.addEventListener("updatefound", function () {
+
                 const newWorker = registration.installing;
 
                 if (!newWorker) return;
 
                 newWorker.addEventListener("statechange", function () {
+
                     if (
                         newWorker.state === "installed" &&
                         navigator.serviceWorker.controller
                     ) {
+
                         newWorker.postMessage({
                             type: "SKIP_WAITING"
                         });
+
                     }
+
                 });
+
             });
 
         } catch (error) {
+
             console.error(
                 "Service Worker registration failed:",
                 error
             );
+
         }
+
     });
+
 }
 
 let kulzzyRefreshing = false;
 
 if ("serviceWorker" in navigator) {
+
     navigator.serviceWorker.addEventListener(
         "controllerchange",
         function () {
+
             if (kulzzyRefreshing) return;
 
             kulzzyRefreshing = true;
             window.location.reload();
+
         }
     );
+
 }
 
 window.kulzzyInstallApp = async function () {
+
     if (!kulzzyInstallPrompt) {
+
         alert(
             "Open your browser menu ⋮ and select " +
             "'Install app' or 'Add to Home screen'."
         );
+
         return;
+
     }
 
     try {
+
         kulzzyInstallPrompt.prompt();
 
         const choice = await kulzzyInstallPrompt.userChoice;
@@ -341,16 +375,21 @@ window.kulzzyInstallApp = async function () {
         kulzzyInstallPrompt = null;
 
     } catch (error) {
+
         console.error("Installation error:", error);
+
     }
+
 };
 
 window.addEventListener("appinstalled", function () {
+
     kulzzyInstallPrompt = null;
 
     try {
         localStorage.setItem("kulzzyRadioInstalled", "true");
     } catch (error) {}
+
 });
 </script><script src="./install.js"></script></body>
 </html>
