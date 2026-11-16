@@ -1,12 +1,21 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#06152B">
-<title>Kulzzy Radio Network</title><link rel="manifest" href="./manifest.json">
+<title>Kulzzy Radio Network</title>
+
+<link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-<link rel="apple-touch-icon" href="./icon-192.png"><link rel="preconnect" href="https://kulzzy.github.io" crossorigin>
-<link rel="dns-prefetch" href="//kulzzy.github.io"><style>
+<link rel="apple-touch-icon" href="./icon-192.png">
+
+<link rel="preconnect" href="https://krn-navigation-bar.pages.dev" crossorigin>
+<link rel="preconnect" href="https://kulzzy-auto-player.pages.dev" crossorigin>
+<link rel="dns-prefetch" href="//krn-navigation-bar.pages.dev">
+<link rel="dns-prefetch" href="//kulzzy-auto-player.pages.dev">
+
+<style>
 * {
     box-sizing: border-box;
 }
@@ -200,37 +209,52 @@ body::before {
         font-size: 26px;
     }
 }
-</style></head><body><!-- MAIN NAVIGATION --><iframe
+</style>
+</head>
+
+<body>
+
+<!-- MAIN NAVIGATION -->
+
+<iframe
     id="kulzzyMainNavigationFrame"
     title="Kulzzy Radio Main Navigation"
-    src="https://kulzzy.github.io/KRN-NAVIGATION-BAR/"
+    src="https://krn-navigation-bar.pages.dev/"
     loading="eager"
     allow="autoplay; clipboard-write; encrypted-media; fullscreen; camera; microphone">
-</iframe><!-- FLOATING RADIO PLAYER --><div id="kulzzyFloatingRadio"><div class="kulzzyFloatRow">
+</iframe>
 
-    <div class="kulzzyFloatPlayer">
+<!-- FLOATING RADIO PLAYER -->
 
-        <iframe
-            src="https://kulzzy.github.io/KULZZY-AUTO-PLAYER/"
-            title="Kulzzy Radio Network Audio Player"
-            allow="autoplay"
-            scrolling="no">
-        </iframe>
+<div id="kulzzyFloatingRadio">
 
-    </div>
+    <div class="kulzzyFloatRow">
 
-    <div class="kulzzyFloatListeners">
+        <div class="kulzzyFloatPlayer">
 
-        <div>
+            <iframe
+                src="https://kulzzy-auto-player.pages.dev/"
+                title="Kulzzy Radio Network Audio Player"
+                allow="autoplay"
+                scrolling="no">
+            </iframe>
 
-            <div class="kulzzyFloatListenerTitle">
-                <span class="kulzzyFloatDot"></span>
-                OUR LISTENERS
+        </div>
+
+        <div class="kulzzyFloatListeners">
+
+            <div>
+
+                <div class="kulzzyFloatListenerTitle">
+                    <span class="kulzzyFloatDot"></span>
+                    OUR LISTENERS
+                </div>
+
+                <div
+                    id="kulzzyFloatingListenerNumber"
+                    class="kulzzyFloatNumber">0</div>
+
             </div>
-
-            <div
-                id="kulzzyFloatingListenerNumber"
-                class="kulzzyFloatNumber">0</div>
 
         </div>
 
@@ -238,7 +262,9 @@ body::before {
 
 </div>
 
-</div><!-- LISTENER DISPLAY --><script>
+<!-- LISTENER DISPLAY -->
+
+<script>
 (function () {
 
     var count = Math.floor(Math.random() * 9000) + 1000;
@@ -270,7 +296,11 @@ body::before {
     }, 4000);
 
 })();
-</script><!-- PWA INSTALLATION AND AUTOMATIC UPDATES --><script>
+</script>
+
+<!-- PWA INSTALLATION AND AUTOMATIC UPDATES -->
+
+<script>
 let kulzzyInstallPrompt = null;
 
 window.addEventListener("beforeinstallprompt", function (event) {
@@ -391,5 +421,9 @@ window.addEventListener("appinstalled", function () {
     } catch (error) {}
 
 });
-</script><script src="./install.js"></script></body>
+</script>
+
+<script src="./install.js"></script>
+
+</body>
 </html>
