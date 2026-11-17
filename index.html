@@ -298,6 +298,130 @@ body::before {
 })();
 </script>
 
+<!-- FIREBASE INSTALLATION TRACKING -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+(function () {
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDB9FAkoACYzpV2Zo1JxakfbM-n6ulI4hc",
+        authDomain: "kulzzy-app-store.firebaseapp.com",
+        databaseURL: "https://kulzzy-app-store-default-rtdb.europe-west1.firebasedatabase.app/",
+        projectId: "kulzzy-app-store",
+        storageBucket: "kulzzy-app-store.firebasestorage.app",
+        messagingSenderId: "235874023923",
+        appId: "1:235874023923:web:a85287300ae114f3143a86"
+    };
+
+    try {
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let kulzzyFirebaseReady = false;
+
+        const authReady = auth.signInAnonymously()
+            .then(function () {
+
+                kulzzyFirebaseReady = true;
+
+                return auth.currentUser;
+
+            })
+            .catch(function (error) {
+
+                console.error(
+                    "Kulzzy installation authentication failed:",
+                    error
+                );
+
+                throw error;
+
+            });
+
+        async function recordKulzzyInstallation() {
+
+            try {
+
+                const user = await authReady;
+
+                if (!user) {
+                    throw new Error("Anonymous user unavailable.");
+                }
+
+                const claimRef = database.ref(
+                    "installClaims/" + user.uid
+                );
+
+                const result = await claimRef.transaction(
+                    function (currentValue) {
+
+                        if (currentValue === null) {
+                            return true;
+                        }
+
+                        return;
+                    }
+                );
+
+                if (result.committed) {
+
+                    console.log(
+                        "Kulzzy Radio installation recorded."
+                    );
+
+                } else {
+
+                    console.log(
+                        "This Firebase account already has an installation claim."
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Could not record Kulzzy installation:",
+                    error
+                );
+
+            }
+
+        }
+
+        window.addEventListener("appinstalled", function () {
+
+            localStorage.setItem(
+                "kulzzyRadioInstalled",
+                "true"
+            );
+
+            recordKulzzyInstallation();
+
+        });
+
+        window.kulzzyRecordInstallation = recordKulzzyInstallation;
+
+    } catch (error) {
+
+        console.error(
+            "Kulzzy Firebase setup failed:",
+            error
+        );
+
+    }
+
+})();
+</script>
+
 <!-- PWA INSTALLATION AND AUTOMATIC UPDATES -->
 
 <script>
