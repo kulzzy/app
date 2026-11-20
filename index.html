@@ -1,21 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#06152B">
-<title>Kulzzy Radio Network</title>
-
-<link rel="manifest" href="./manifest.json">
+<title>Kulzzy Radio Network</title><link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-<link rel="apple-touch-icon" href="./icon-192.png">
-
-<link rel="preconnect" href="https://krn-navigation-bar.pages.dev" crossorigin>
+<link rel="apple-touch-icon" href="./icon-192.png"><link rel="preconnect" href="https://krn-navigation-bar.pages.dev" crossorigin>
 <link rel="preconnect" href="https://kulzzy-auto-player.pages.dev" crossorigin>
 <link rel="dns-prefetch" href="//krn-navigation-bar.pages.dev">
-<link rel="dns-prefetch" href="//kulzzy-auto-player.pages.dev">
-
-<style>
+<link rel="dns-prefetch" href="//kulzzy-auto-player.pages.dev"><style>
 * {
     box-sizing: border-box;
 }
@@ -150,6 +143,25 @@ body::before {
     }
 }
 
+/* BACK BUTTON MESSAGE */
+
+#kulzzyBackMessage {
+    position: fixed;
+    left: 50%;
+    bottom: 125px;
+    transform: translateX(-50%);
+    background: #ffd000;
+    color: #06152B;
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: bold;
+    z-index: 9999999999;
+    display: none;
+    white-space: nowrap;
+    box-shadow: 0 3px 12px rgba(0,0,0,.4);
+}
+
 /* MOBILE */
 
 @media (max-width: 650px) {
@@ -209,52 +221,37 @@ body::before {
         font-size: 26px;
     }
 }
-</style>
-</head>
-
-<body>
-
-<!-- MAIN NAVIGATION -->
-
-<iframe
+</style></head><body><!-- MAIN NAVIGATION --><iframe
     id="kulzzyMainNavigationFrame"
     title="Kulzzy Radio Main Navigation"
     src="https://krn-navigation-bar.pages.dev/"
     loading="eager"
     allow="autoplay; clipboard-write; encrypted-media; fullscreen; camera; microphone">
-</iframe>
+</iframe><!-- FLOATING RADIO PLAYER --><div id="kulzzyFloatingRadio"><div class="kulzzyFloatRow">
 
-<!-- FLOATING RADIO PLAYER -->
+    <div class="kulzzyFloatPlayer">
 
-<div id="kulzzyFloatingRadio">
+        <iframe
+            src="https://kulzzy-auto-player.pages.dev/"
+            title="Kulzzy Radio Network Audio Player"
+            allow="autoplay"
+            scrolling="no">
+        </iframe>
 
-    <div class="kulzzyFloatRow">
+    </div>
 
-        <div class="kulzzyFloatPlayer">
+    <div class="kulzzyFloatListeners">
 
-            <iframe
-                src="https://kulzzy-auto-player.pages.dev/"
-                title="Kulzzy Radio Network Audio Player"
-                allow="autoplay"
-                scrolling="no">
-            </iframe>
+        <div>
 
-        </div>
-
-        <div class="kulzzyFloatListeners">
-
-            <div>
-
-                <div class="kulzzyFloatListenerTitle">
-                    <span class="kulzzyFloatDot"></span>
-                    OUR LISTENERS
-                </div>
-
-                <div
-                    id="kulzzyFloatingListenerNumber"
-                    class="kulzzyFloatNumber">0</div>
-
+            <div class="kulzzyFloatListenerTitle">
+                <span class="kulzzyFloatDot"></span>
+                OUR LISTENERS
             </div>
+
+            <div
+                id="kulzzyFloatingListenerNumber"
+                class="kulzzyFloatNumber">0</div>
 
         </div>
 
@@ -262,9 +259,9 @@ body::before {
 
 </div>
 
-<!-- LISTENER DISPLAY -->
-
-<script>
+</div><div id="kulzzyBackMessage">
+    Press BACK again to leave Kulzzy Radio
+</div><!-- LISTENER DISPLAY --><script>
 (function () {
 
     var count = Math.floor(Math.random() * 9000) + 1000;
@@ -296,15 +293,244 @@ body::before {
     }, 4000);
 
 })();
-</script>
+</script><!-- CENTRAL APP BACK NAVIGATION --><script>
+(function () {
 
-<!-- FIREBASE INSTALLATION TRACKING -->
+    "use strict";
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    var navigationFrame = document.getElementById(
+        "kulzzyMainNavigationFrame"
+    );
 
-<script>
+    var backMessage = document.getElementById(
+        "kulzzyBackMessage"
+    );
+
+    var backMessageTimer = null;
+    var lastBackTime = 0;
+    var backPromptDuration = 2000;
+    var handlingBack = false;
+
+    /*
+       Create an app history entry.
+
+       This allows the app to receive a Back event
+       before the browser leaves the main page.
+    */
+
+    function createBackGuard() {
+
+        try {
+
+            history.replaceState(
+                { kulzzyApp: true, screen: "main" },
+                "",
+                location.href
+            );
+
+            history.pushState(
+                { kulzzyApp: true, screen: "guard" },
+                "",
+                location.href
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Kulzzy Back navigation setup failed:",
+                error
+            );
+
+        }
+
+    }
+
+    /*
+       Send the Back command to the navigation iframe.
+
+       The navigation app must listen for this message
+       and perform its own internal Back navigation.
+    */
+
+    function sendBackToNavigation() {
+
+        try {
+
+            if (
+                navigationFrame &&
+                navigationFrame.contentWindow
+            ) {
+
+                navigationFrame.contentWindow.postMessage(
+                    {
+                        type: "KULZZY_APP_BACK",
+                        source: "KULZZY_MAIN_APP"
+                    },
+                    "https://krn-navigation-bar.pages.dev"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Could not send Back command:",
+                error
+            );
+
+        }
+
+    }
+
+    /*
+       Show the double-Back exit instruction.
+    */
+
+    function showBackMessage() {
+
+        if (!backMessage) return;
+
+        backMessage.style.display = "block";
+
+        clearTimeout(backMessageTimer);
+
+        backMessageTimer = setTimeout(function () {
+
+            backMessage.style.display = "none";
+
+        }, backPromptDuration);
+
+    }
+
+    function hideBackMessage() {
+
+        if (!backMessage) return;
+
+        backMessage.style.display = "none";
+
+        clearTimeout(backMessageTimer);
+
+    }
+
+    /*
+       Handle the app Back action.
+    */
+
+    function handleAppBack() {
+
+        var now = Date.now();
+
+        /*
+           First Back:
+           Send navigation Back command and show prompt.
+        */
+
+        if (
+            !lastBackTime ||
+            now - lastBackTime > backPromptDuration
+        ) {
+
+            lastBackTime = now;
+
+            sendBackToNavigation();
+
+            showBackMessage();
+
+            return;
+
+        }
+
+        /*
+           Second Back:
+           Do not force-close the app.
+
+           Browsers and operating systems control
+           whether an installed PWA can be exited.
+        */
+
+        lastBackTime = 0;
+
+        hideBackMessage();
+
+        sendBackToNavigation();
+
+    }
+
+    /*
+       Restore the history guard after Back navigation.
+    */
+
+    window.addEventListener("popstate", function () {
+
+        if (handlingBack) return;
+
+        handlingBack = true;
+
+        handleAppBack();
+
+        /*
+           Re-arm the app history guard.
+        */
+
+        setTimeout(function () {
+
+            try {
+
+                history.pushState(
+                    {
+                        kulzzyApp: true,
+                        screen: "guard"
+                    },
+                    "",
+                    location.href
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Could not restore app history:",
+                    error
+                );
+
+            }
+
+            handlingBack = false;
+
+        }, 50);
+
+    });
+
+    /*
+       Initialize when the main document loads.
+    */
+
+    if (document.readyState === "loading") {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            createBackGuard,
+            { once: true }
+        );
+
+    } else {
+
+        createBackGuard();
+
+    }
+
+    /*
+       Allow other parts of the main app to request
+       a navigation Back action.
+    */
+
+    window.kulzzyAppBack = function () {
+
+        handleAppBack();
+
+    };
+
+})();
+</script><!-- FIREBASE INSTALLATION TRACKING --><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script>
 (function () {
 
     const firebaseConfig = {
@@ -326,12 +552,8 @@ body::before {
         const auth = firebase.auth();
         const database = firebase.database();
 
-        let kulzzyFirebaseReady = false;
-
         const authReady = auth.signInAnonymously()
             .then(function () {
-
-                kulzzyFirebaseReady = true;
 
                 return auth.currentUser;
 
@@ -420,11 +642,7 @@ body::before {
     }
 
 })();
-</script>
-
-<!-- PWA INSTALLATION AND AUTOMATIC UPDATES -->
-
-<script>
+</script><!-- PWA INSTALLATION AND AUTOMATIC UPDATES --><script>
 let kulzzyInstallPrompt = null;
 
 window.addEventListener("beforeinstallprompt", function (event) {
@@ -545,9 +763,5 @@ window.addEventListener("appinstalled", function () {
     } catch (error) {}
 
 });
-</script>
-
-<script src="./install.js"></script>
-
-</body>
+</script><script src="./install.js"></script></body>
 </html>
