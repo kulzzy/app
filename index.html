@@ -6,7 +6,8 @@
 <title>Kulzzy Radio Network</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-<link rel="apple-touch-icon" href="./icon-192.png"><link rel="preconnect" href="https://krn-navigation-bar.pages.dev" crossorigin>
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://krn-navigation-bar.pages.dev" crossorigin>
 <link rel="preconnect" href="https://kulzzy-auto-player.pages.dev" crossorigin>
 <link rel="dns-prefetch" href="//krn-navigation-bar.pages.dev">
 <link rel="dns-prefetch" href="//kulzzy-auto-player.pages.dev"><style>
@@ -227,6 +228,7 @@ body::before {
 </iframe><!-- FLOATING RADIO PLAYER --><div id="kulzzyFloatingRadio">
     <div class="kulzzyFloatRow">    <div class="kulzzyFloatPlayer">
         <iframe
+            id="kulzzyRadioPlayerFrame"
             src="https://kulzzy-auto-player.pages.dev/"
             title="Kulzzy Radio Network Audio Player"
             allow="autoplay"
@@ -305,17 +307,9 @@ body::before {
 
     var handlingBack = false;
 
-    /*
-       Navigation state received from the navigation iframe.
-    */
-
     var navigationDepth = null;
     var navigationAtRoot = null;
     var navigationStateReceived = false;
-
-    /*
-       Create the initial browser history guard.
-    */
 
     function createBackGuard() {
 
@@ -350,10 +344,6 @@ body::before {
 
     }
 
-    /*
-       Send a message to the navigation iframe.
-    */
-
     function sendNavigationMessage(message) {
 
         try {
@@ -381,10 +371,6 @@ body::before {
 
     }
 
-    /*
-       Ask the navigation iframe for its current view.
-    */
-
     function requestNavigationState() {
 
         sendNavigationMessage({
@@ -392,10 +378,6 @@ body::before {
         });
 
     }
-
-    /*
-       Send Back to the navigation iframe.
-    */
 
     function sendBackToNavigation() {
 
@@ -405,10 +387,6 @@ body::before {
         });
 
     }
-
-    /*
-       Show the double-Back exit message.
-    */
 
     function showBackMessage() {
 
@@ -436,10 +414,6 @@ body::before {
 
     }
 
-    /*
-       Restore the history guard after an internal Back action.
-    */
-
     function restoreBackGuard() {
 
         try {
@@ -464,24 +438,9 @@ body::before {
 
     }
 
-    /*
-       Handle physical Android/browser Back.
-
-       If the navigation iframe is inside a page,
-       return to its previous view.
-
-       If it is already at root, use double-Back
-       to allow the browser/OS to leave the app.
-    */
-
     function handleAppBack() {
 
         var now = Date.now();
-
-        /*
-           Navigation state has not arrived yet.
-           Ask for it and avoid accidentally exiting.
-        */
 
         if (!navigationStateReceived) {
 
@@ -498,11 +457,6 @@ body::before {
             return;
 
         }
-
-        /*
-           The user is inside a navigation page.
-           Go back inside the navigation iframe.
-        */
 
         if (
             navigationAtRoot === false ||
@@ -521,11 +475,6 @@ body::before {
 
         }
 
-        /*
-           The navigation iframe is at its root.
-           First Back displays the exit instruction.
-        */
-
         if (
             !lastBackTime ||
             now - lastBackTime > backPromptDuration
@@ -542,22 +491,11 @@ body::before {
 
         }
 
-        /*
-           Second Back at root.
-
-           Do not add another history guard here.
-           Allow the browser or Android to handle exit.
-        */
-
         lastBackTime = 0;
 
         hideBackMessage();
 
     }
-
-    /*
-       Receive navigation state only from our trusted iframe.
-    */
 
     window.addEventListener("message", function (event) {
 
@@ -588,11 +526,6 @@ body::before {
 
     });
 
-    /*
-       Request the current state whenever the navigation
-       iframe loads or reloads.
-    */
-
     navigationFrame.addEventListener("load", function () {
 
         navigationStateReceived = false;
@@ -602,10 +535,6 @@ body::before {
         requestNavigationState();
 
     });
-
-    /*
-       Android/browser Back event.
-    */
 
     window.addEventListener("popstate", function () {
 
@@ -622,10 +551,6 @@ body::before {
         }, 80);
 
     });
-
-    /*
-       Initialize the history guard.
-    */
 
     if (document.readyState === "loading") {
 
@@ -649,15 +574,53 @@ body::before {
 
     }
 
-    /*
-       Allow other main-app scripts to request Back.
-    */
-
     window.kulzzyAppBack = function () {
 
         handleAppBack();
 
     };
+
+})();
+</script><!-- COMPETITION AUDIO COMMUNICATION --><script>
+(function () {
+
+    "use strict";
+
+    var RADIO_ORIGIN = "https://kulzzy-auto-player.pages.dev";
+
+    window.addEventListener("message", function (event) {
+
+        if (event.origin !== window.location.origin) return;
+
+        var data = event.data;
+
+        if (!data || data.type !== "KULZZY_COMPETITION_AUDIO") {
+            return;
+        }
+
+        if (
+            data.action !== "pause" &&
+            data.action !== "resume"
+        ) {
+            return;
+        }
+
+        var radioFrame = document.getElementById(
+            "kulzzyRadioPlayerFrame"
+        );
+
+        if (!radioFrame || !radioFrame.contentWindow) return;
+
+        radioFrame.contentWindow.postMessage({
+
+            type: "KULZZY_COMPETITION_AUDIO",
+            action: data.action,
+            timestamp: data.timestamp || Date.now(),
+            nonce: data.nonce || null
+
+        }, RADIO_ORIGIN);
+
+    });
 
 })();
 </script><!-- FIREBASE INSTALLATION TRACKING --><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script>
