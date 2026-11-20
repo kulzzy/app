@@ -3,7 +3,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#06152B">
-<title>Kulzzy Radio Network</title><link rel="manifest" href="./manifest.json">
+<title>Kulzzy Radio Network</title>
+<link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png"><link rel="preconnect" href="https://krn-navigation-bar.pages.dev" crossorigin>
 <link rel="preconnect" href="https://kulzzy-auto-player.pages.dev" crossorigin>
@@ -30,8 +31,6 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
     background: #020d1a url("./kulzzy-listeners-background.png") center center / cover no-repeat fixed;
 }
-
-/* FULL-PAGE BACKGROUND */
 
 body::before {
     content: "";
@@ -165,7 +164,6 @@ body::before {
 /* MOBILE */
 
 @media (max-width: 650px) {
-
     #kulzzyMainNavigationFrame {
         height: calc(100vh - 109px);
         height: calc(100dvh - 109px);
@@ -212,7 +210,6 @@ body::before {
 }
 
 @media (max-width: 380px) {
-
     .kulzzyFloatListenerTitle {
         font-size: 9px;
     }
@@ -227,23 +224,18 @@ body::before {
     src="https://krn-navigation-bar.pages.dev/"
     loading="eager"
     allow="autoplay; clipboard-write; encrypted-media; fullscreen; camera; microphone">
-</iframe><!-- FLOATING RADIO PLAYER --><div id="kulzzyFloatingRadio"><div class="kulzzyFloatRow">
-
-    <div class="kulzzyFloatPlayer">
-
+</iframe><!-- FLOATING RADIO PLAYER --><div id="kulzzyFloatingRadio">
+    <div class="kulzzyFloatRow">    <div class="kulzzyFloatPlayer">
         <iframe
             src="https://kulzzy-auto-player.pages.dev/"
             title="Kulzzy Radio Network Audio Player"
             allow="autoplay"
             scrolling="no">
         </iframe>
-
     </div>
 
     <div class="kulzzyFloatListeners">
-
         <div>
-
             <div class="kulzzyFloatListenerTitle">
                 <span class="kulzzyFloatDot"></span>
                 OUR LISTENERS
@@ -252,9 +244,7 @@ body::before {
             <div
                 id="kulzzyFloatingListenerNumber"
                 class="kulzzyFloatNumber">0</div>
-
         </div>
-
     </div>
 
 </div>
@@ -298,6 +288,8 @@ body::before {
 
     "use strict";
 
+    var NAV_ORIGIN = "https://krn-navigation-bar.pages.dev";
+
     var navigationFrame = document.getElementById(
         "kulzzyMainNavigationFrame"
     );
@@ -307,15 +299,22 @@ body::before {
     );
 
     var backMessageTimer = null;
+
     var lastBackTime = 0;
     var backPromptDuration = 2000;
+
     var handlingBack = false;
 
     /*
-       Create an app history entry.
+       Navigation state received from the navigation iframe.
+    */
 
-       This allows the app to receive a Back event
-       before the browser leaves the main page.
+    var navigationDepth = null;
+    var navigationAtRoot = null;
+    var navigationStateReceived = false;
+
+    /*
+       Create the initial browser history guard.
     */
 
     function createBackGuard() {
@@ -323,13 +322,19 @@ body::before {
         try {
 
             history.replaceState(
-                { kulzzyApp: true, screen: "main" },
+                {
+                    kulzzyApp: true,
+                    screen: "main"
+                },
                 "",
                 location.href
             );
 
             history.pushState(
-                { kulzzyApp: true, screen: "guard" },
+                {
+                    kulzzyApp: true,
+                    screen: "guard"
+                },
                 "",
                 location.href
             );
@@ -346,13 +351,10 @@ body::before {
     }
 
     /*
-       Send the Back command to the navigation iframe.
-
-       The navigation app must listen for this message
-       and perform its own internal Back navigation.
+       Send a message to the navigation iframe.
     */
 
-    function sendBackToNavigation() {
+    function sendNavigationMessage(message) {
 
         try {
 
@@ -362,11 +364,8 @@ body::before {
             ) {
 
                 navigationFrame.contentWindow.postMessage(
-                    {
-                        type: "KULZZY_APP_BACK",
-                        source: "KULZZY_MAIN_APP"
-                    },
-                    "https://krn-navigation-bar.pages.dev"
+                    message,
+                    NAV_ORIGIN
                 );
 
             }
@@ -374,7 +373,7 @@ body::before {
         } catch (error) {
 
             console.error(
-                "Could not send Back command:",
+                "Kulzzy navigation message failed:",
                 error
             );
 
@@ -383,7 +382,32 @@ body::before {
     }
 
     /*
-       Show the double-Back exit instruction.
+       Ask the navigation iframe for its current view.
+    */
+
+    function requestNavigationState() {
+
+        sendNavigationMessage({
+            type: "KULZZY_REQUEST_STATE"
+        });
+
+    }
+
+    /*
+       Send Back to the navigation iframe.
+    */
+
+    function sendBackToNavigation() {
+
+        sendNavigationMessage({
+            type: "KULZZY_APP_BACK",
+            source: "KULZZY_MAIN_APP"
+        });
+
+    }
+
+    /*
+       Show the double-Back exit message.
     */
 
     function showBackMessage() {
@@ -413,7 +437,41 @@ body::before {
     }
 
     /*
-       Handle the app Back action.
+       Restore the history guard after an internal Back action.
+    */
+
+    function restoreBackGuard() {
+
+        try {
+
+            history.pushState(
+                {
+                    kulzzyApp: true,
+                    screen: "guard"
+                },
+                "",
+                location.href
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Could not restore Kulzzy history guard:",
+                error
+            );
+
+        }
+
+    }
+
+    /*
+       Handle physical Android/browser Back.
+
+       If the navigation iframe is inside a page,
+       return to its previous view.
+
+       If it is already at root, use double-Back
+       to allow the browser/OS to leave the app.
     */
 
     function handleAppBack() {
@@ -421,8 +479,51 @@ body::before {
         var now = Date.now();
 
         /*
-           First Back:
-           Send navigation Back command and show prompt.
+           Navigation state has not arrived yet.
+           Ask for it and avoid accidentally exiting.
+        */
+
+        if (!navigationStateReceived) {
+
+            requestNavigationState();
+
+            sendBackToNavigation();
+
+            lastBackTime = 0;
+
+            hideBackMessage();
+
+            restoreBackGuard();
+
+            return;
+
+        }
+
+        /*
+           The user is inside a navigation page.
+           Go back inside the navigation iframe.
+        */
+
+        if (
+            navigationAtRoot === false ||
+            (navigationAtRoot !== true && navigationDepth > 0)
+        ) {
+
+            lastBackTime = 0;
+
+            hideBackMessage();
+
+            sendBackToNavigation();
+
+            restoreBackGuard();
+
+            return;
+
+        }
+
+        /*
+           The navigation iframe is at its root.
+           First Back displays the exit instruction.
         */
 
         if (
@@ -432,32 +533,78 @@ body::before {
 
             lastBackTime = now;
 
-            sendBackToNavigation();
-
+            hideBackMessage();
             showBackMessage();
+
+            restoreBackGuard();
 
             return;
 
         }
 
         /*
-           Second Back:
-           Do not force-close the app.
+           Second Back at root.
 
-           Browsers and operating systems control
-           whether an installed PWA can be exited.
+           Do not add another history guard here.
+           Allow the browser or Android to handle exit.
         */
 
         lastBackTime = 0;
 
         hideBackMessage();
 
-        sendBackToNavigation();
-
     }
 
     /*
-       Restore the history guard after Back navigation.
+       Receive navigation state only from our trusted iframe.
+    */
+
+    window.addEventListener("message", function (event) {
+
+        if (event.origin !== NAV_ORIGIN) return;
+
+        if (
+            !navigationFrame ||
+            event.source !== navigationFrame.contentWindow
+        ) return;
+
+        var data = event.data;
+
+        if (!data || typeof data !== "object") return;
+
+        if (data.type === "KULZZY_NAV_STATE") {
+
+            navigationStateReceived = true;
+
+            navigationDepth = Number.isFinite(Number(data.depth))
+                ? Number(data.depth)
+                : 0;
+
+            navigationAtRoot = typeof data.atRoot === "boolean"
+                ? data.atRoot
+                : navigationDepth <= 0;
+
+        }
+
+    });
+
+    /*
+       Request the current state whenever the navigation
+       iframe loads or reloads.
+    */
+
+    navigationFrame.addEventListener("load", function () {
+
+        navigationStateReceived = false;
+        navigationDepth = null;
+        navigationAtRoot = null;
+
+        requestNavigationState();
+
+    });
+
+    /*
+       Android/browser Back event.
     */
 
     window.addEventListener("popstate", function () {
@@ -468,47 +615,29 @@ body::before {
 
         handleAppBack();
 
-        /*
-           Re-arm the app history guard.
-        */
-
         setTimeout(function () {
-
-            try {
-
-                history.pushState(
-                    {
-                        kulzzyApp: true,
-                        screen: "guard"
-                    },
-                    "",
-                    location.href
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Could not restore app history:",
-                    error
-                );
-
-            }
 
             handlingBack = false;
 
-        }, 50);
+        }, 80);
 
     });
 
     /*
-       Initialize when the main document loads.
+       Initialize the history guard.
     */
 
     if (document.readyState === "loading") {
 
         document.addEventListener(
             "DOMContentLoaded",
-            createBackGuard,
+            function () {
+
+                createBackGuard();
+
+                requestNavigationState();
+
+            },
             { once: true }
         );
 
@@ -516,11 +645,12 @@ body::before {
 
         createBackGuard();
 
+        requestNavigationState();
+
     }
 
     /*
-       Allow other parts of the main app to request
-       a navigation Back action.
+       Allow other main-app scripts to request Back.
     */
 
     window.kulzzyAppBack = function () {
