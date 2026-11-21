@@ -10,7 +10,8 @@
 <link rel="preconnect" href="https://krn-navigation-bar.pages.dev" crossorigin>
 <link rel="preconnect" href="https://kulzzy-auto-player.pages.dev" crossorigin>
 <link rel="dns-prefetch" href="//krn-navigation-bar.pages.dev">
-<link rel="dns-prefetch" href="//kulzzy-auto-player.pages.dev"><style>
+<link rel="dns-prefetch" href="//kulzzy-auto-player.pages.dev">
+<style>
 * { box-sizing: border-box; }
 html { overscroll-behavior-y: auto; }
 html, body {
@@ -94,35 +95,47 @@ body::before {
     .kulzzyFloatListenerTitle { font-size: 9px; }
     .kulzzyFloatNumber { font-size: 26px; }
 }
-</style></head><body><!-- MAIN NAVIGATION --><iframe
+</style></head><body>
+
+<!-- MAIN NAVIGATION -->
+<iframe
     id="kulzzyMainNavigationFrame"
     title="Kulzzy Radio Main Navigation"
     src="https://krn-navigation-bar.pages.dev/"
     loading="eager"
     allow="autoplay; clipboard-write; encrypted-media; fullscreen; camera; microphone">
-</iframe><!-- FLOATING RADIO PLAYER --><div id="kulzzyFloatingRadio">
-    <div class="kulzzyFloatRow">    <div class="kulzzyFloatPlayer">
-        <iframe
-            id="kulzzyRadioPlayerFrame"
-            src="https://kulzzy-auto-player.pages.dev/"
-            title="Kulzzy Radio Network Audio Player"
-            allow="autoplay"
-            scrolling="no">
-        </iframe>
-    </div>
-    <div class="kulzzyFloatListeners">
-        <div>
-            <div class="kulzzyFloatListenerTitle">
-                <span class="kulzzyFloatDot"></span>
-                OUR LISTENERS
+</iframe>
+
+<!-- FLOATING RADIO PLAYER -->
+<div id="kulzzyFloatingRadio">
+    <div class="kulzzyFloatRow">
+        <div class="kulzzyFloatPlayer">
+            <iframe
+                id="kulzzyRadioPlayerFrame"
+                src="https://kulzzy-auto-player.pages.dev/"
+                title="Kulzzy Radio Network Audio Player"
+                allow="autoplay"
+                scrolling="no">
+            </iframe>
+        </div>
+        <div class="kulzzyFloatListeners">
+            <div>
+                <div class="kulzzyFloatListenerTitle">
+                    <span class="kulzzyFloatDot"></span>
+                    OUR LISTENERS
+                </div>
+                <div id="kulzzyFloatingListenerNumber" class="kulzzyFloatNumber">0</div>
             </div>
-            <div id="kulzzyFloatingListenerNumber" class="kulzzyFloatNumber">0</div>
         </div>
     </div>
 </div>
-</div><div id="kulzzyBackMessage">
+
+<div id="kulzzyBackMessage">
     Press BACK again to leave Kulzzy Radio
-</div><!-- LISTENER DISPLAY --><script>
+</div>
+
+<!-- LISTENER DISPLAY -->
+<script>
 (function () {
     var count = Math.floor(Math.random() * 9000) + 1000;
     var display = document.getElementById("kulzzyFloatingListenerNumber");
@@ -137,7 +150,10 @@ body::before {
         display.textContent = count.toLocaleString();
     }, 4000);
 })();
-</script><!-- CENTRAL APP BACK NAVIGATION --><script>
+</script>
+
+<!-- CENTRAL APP BACK NAVIGATION -->
+<script>
 (function () {
     "use strict";
     var NAV_ORIGIN = "https://krn-navigation-bar.pages.dev";
@@ -256,26 +272,149 @@ body::before {
     }
     window.kulzzyAppBack = function () { handleAppBack(); };
 })();
-</script><!-- COMPETITION AUDIO COMMUNICATION --><script>
+</script>
+
+<!-- KULZZY UNIVERSAL MEDIA CONTROL CENTER -->
+<script>
 (function () {
     "use strict";
+
     var RADIO_ORIGIN = "https://kulzzy-auto-player.pages.dev";
-    window.addEventListener("message", function (event) {
-        if (event.origin !== "https://kulzzy.github.io") return;
-        var data = event.data;
-        if (!data || data.type !== "KULZZY_COMPETITION_AUDIO") return;
-        if (data.action !== "pause" && data.action !== "resume") return;
-        var radioFrame = document.getElementById("kulzzyRadioPlayerFrame");
-        if (!radioFrame || !radioFrame.contentWindow) return;
-        radioFrame.contentWindow.postMessage({
-            type: "KULZZY_COMPETITION_AUDIO",
-            action: data.action,
-            timestamp: data.timestamp || Date.now(),
-            nonce: data.nonce || null
+
+    /* Add the exact origin of each future media-player website here. */
+    var TRUSTED_MEDIA_ORIGINS = [
+        "https://kulzzy.github.io"
+    ];
+
+    var activePlayers = Object.create(null);
+    var radioPausedByController = false;
+    var lastCommandIds = Object.create(null);
+
+    function getRadioFrame() {
+        return document.getElementById("kulzzyRadioPlayerFrame");
+    }
+
+    function sendRadioCommand(action) {
+        var frame = getRadioFrame();
+        if (!frame || !frame.contentWindow) {
+            radioPausedByController = false;
+            return;
+        }
+
+        frame.contentWindow.postMessage({
+            type: "KULZZY_MEDIA_CONTROL",
+            action: action,
+            activePlayers: Object.keys(activePlayers),
+            timestamp: Date.now()
         }, RADIO_ORIGIN);
-    });
+
+        radioPausedByController = action === "pause";
+    }
+
+    function updateRadio() {
+        var hasActiveMedia = Object.keys(activePlayers).length > 0;
+
+        if (hasActiveMedia && !radioPausedByController) {
+            sendRadioCommand("pause");
+        } else if (!hasActiveMedia && radioPausedByController) {
+            sendRadioCommand("resume");
+        }
+    }
+
+    function handleMessage(event) {
+        if (TRUSTED_MEDIA_ORIGINS.indexOf(event.origin) === -1) return;
+
+        var data = event.data;
+        if (!data || typeof data !== "object") return;
+
+        var playerId;
+        var action;
+        var key;
+        var commandId;
+
+        /* Keep compatibility with the current competition player. */
+        if (data.type === "KULZZY_COMPETITION_AUDIO") {
+            playerId = "best-streaming-song";
+            action = data.action === "pause" ? "play" :
+                     data.action === "resume" ? "stop" : "";
+        } else if (data.type === "KULZZY_MEDIA_CONTROL") {
+            playerId = String(data.playerId || "").trim();
+            action = String(data.action || "").toLowerCase();
+        } else {
+            return;
+        }
+
+        if (!playerId || playerId.length > 100) return;
+
+        if (["play", "stop", "pause", "ended", "error"].indexOf(action) === -1) {
+            return;
+        }
+
+        key = event.origin + "|" + playerId;
+        commandId = String(data.commandId || "");
+
+        if (commandId && lastCommandIds[key] === commandId) return;
+        if (commandId) lastCommandIds[key] = commandId;
+
+        if (action === "play") {
+            activePlayers[key] = true;
+        } else {
+            delete activePlayers[key];
+        }
+
+        updateRadio();
+
+        /* Send an acknowledgement to the player that sent the command. */
+        try {
+            if (event.source && event.source.postMessage) {
+                event.source.postMessage({
+                    type: "KULZZY_MEDIA_CONTROL_ACK",
+                    playerId: playerId,
+                    action: action,
+                    activePlayers: Object.keys(activePlayers).length,
+                    radioPaused: radioPausedByController,
+                    timestamp: Date.now()
+                }, event.origin);
+            }
+        } catch (error) {
+            console.warn("Kulzzy media acknowledgement failed:", error);
+        }
+    }
+
+    window.addEventListener("message", handleMessage);
+
+    /* Reapply the pause if the radio iframe reloads during another player's playback. */
+    var radioFrame = getRadioFrame();
+
+    if (radioFrame) {
+        radioFrame.addEventListener("load", function () {
+            radioPausedByController = false;
+            updateRadio();
+        });
+    }
+
+    /* Public connection point for future trusted media-player origins. */
+    window.kulzzyMediaControl = {
+        addTrustedOrigin: function (origin) {
+            if (typeof origin === "string" &&
+                /^https:\/\//.test(origin) &&
+                TRUSTED_MEDIA_ORIGINS.indexOf(origin) === -1) {
+                TRUSTED_MEDIA_ORIGINS.push(origin);
+            }
+        },
+
+        getActivePlayers: function () {
+            return Object.keys(activePlayers);
+        }
+    };
 })();
-</script><!-- FIREBASE INSTALLATION TRACKING --><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script>
+</script>
+
+<!-- FIREBASE INSTALLATION TRACKING -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
 (function () {
     const firebaseConfig = {
         apiKey: "AIzaSyDB9FAkoACYzpV2Zo1JxakfbM-n6ulI4hc",
@@ -286,25 +425,32 @@ body::before {
         messagingSenderId: "235874023923",
         appId: "1:235874023923:web:a85287300ae114f3143a86"
     };
+
     try {
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
         const auth = firebase.auth();
         const database = firebase.database();
+
         const authReady = auth.signInAnonymously().then(function () {
             return auth.currentUser;
         }).catch(function (error) {
             console.error("Kulzzy installation authentication failed:", error);
             throw error;
         });
+
         async function recordKulzzyInstallation() {
             try {
                 const user = await authReady;
                 if (!user) throw new Error("Anonymous user unavailable.");
+
                 const claimRef = database.ref("installClaims/" + user.uid);
+
                 const result = await claimRef.transaction(function (currentValue) {
                     if (currentValue === null) return true;
                     return;
                 });
+
                 if (result.committed) {
                     console.log("Kulzzy Radio installation recorded.");
                 } else {
@@ -314,42 +460,58 @@ body::before {
                 console.error("Could not record Kulzzy installation:", error);
             }
         }
+
         window.addEventListener("appinstalled", function () {
             localStorage.setItem("kulzzyRadioInstalled", "true");
             recordKulzzyInstallation();
         });
+
         window.kulzzyRecordInstallation = recordKulzzyInstallation;
+
     } catch (error) {
         console.error("Kulzzy Firebase setup failed:", error);
     }
 })();
-</script><!-- PWA INSTALLATION AND AUTOMATIC UPDATES --><script>
+</script>
+
+<!-- PWA INSTALLATION AND AUTOMATIC UPDATES -->
+<script>
 let kulzzyInstallPrompt = null;
+
 window.addEventListener("beforeinstallprompt", function (event) {
     event.preventDefault();
     kulzzyInstallPrompt = event;
 });
+
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", async function () {
         try {
             const registration = await navigator.serviceWorker.register("./sw.js", {scope: "./"});
             registration.update();
-            setInterval(function () { registration.update(); }, 60000);
+
+            setInterval(function () {
+                registration.update();
+            }, 60000);
+
             registration.addEventListener("updatefound", function () {
                 const newWorker = registration.installing;
                 if (!newWorker) return;
+
                 newWorker.addEventListener("statechange", function () {
                     if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
                         newWorker.postMessage({type: "SKIP_WAITING"});
                     }
                 });
             });
+
         } catch (error) {
             console.error("Service Worker registration failed:", error);
         }
     });
 }
+
 let kulzzyRefreshing = false;
+
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.addEventListener("controllerchange", function () {
         if (kulzzyRefreshing) return;
@@ -357,23 +519,32 @@ if ("serviceWorker" in navigator) {
         window.location.reload();
     });
 }
+
 window.kulzzyInstallApp = async function () {
     if (!kulzzyInstallPrompt) {
         alert("Open your browser menu ⋮ and select 'Install app' or 'Add to Home screen'.");
         return;
     }
+
     try {
         kulzzyInstallPrompt.prompt();
         const choice = await kulzzyInstallPrompt.userChoice;
         console.log("Installation:", choice.outcome);
         kulzzyInstallPrompt = null;
+
     } catch (error) {
         console.error("Installation error:", error);
     }
 };
+
 window.addEventListener("appinstalled", function () {
     kulzzyInstallPrompt = null;
-    try { localStorage.setItem("kulzzyRadioInstalled", "true"); } catch (error) {}
+    try {
+        localStorage.setItem("kulzzyRadioInstalled", "true");
+    } catch (error) {}
 });
-</script><script src="./install.js"></script></body>
+</script>
+
+<script src="./install.js"></script>
+</body>
 </html>
