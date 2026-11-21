@@ -1,16 +1,24 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#06152B">
 <title>Kulzzy Radio Network</title>
+
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-<link rel="apple-touch-icon" href="./icon-192.png"><link rel="preconnect" href="https://krn-navigation-bar.pages.dev" crossorigin>
+<link rel="apple-touch-icon" href="./icon-192.png">
+
+<link rel="preconnect" href="https://krn-navigation-bar.pages.dev" crossorigin>
 <link rel="preconnect" href="https://kulzzy-auto-player.pages.dev" crossorigin>
-<link rel="preconnect" href="https://kulzzy.github.io" crossorigin><link rel="dns-prefetch" href="//krn-navigation-bar.pages.dev">
+<link rel="preconnect" href="https://kulzzy.github.io" crossorigin>
+
+<link rel="dns-prefetch" href="//krn-navigation-bar.pages.dev">
 <link rel="dns-prefetch" href="//kulzzy-auto-player.pages.dev">
-<link rel="dns-prefetch" href="//kulzzy.github.io"><style>
+<link rel="dns-prefetch" href="//kulzzy.github.io">
+
+<style>
 * { box-sizing: border-box; }
 
 html { overscroll-behavior-y: auto; }
@@ -206,39 +214,57 @@ body::before {
         font-size: 26px;
     }
 }
-</style></head><body><!-- MAIN NAVIGATION --><iframe
+</style>
+</head>
+
+<body>
+
+<!-- MAIN NAVIGATION -->
+
+<iframe
     id="kulzzyMainNavigationFrame"
     title="Kulzzy Radio Main Navigation"
     src="https://krn-navigation-bar.pages.dev/"
     loading="eager"
     allow="autoplay; clipboard-write; encrypted-media; fullscreen; camera; microphone">
-</iframe><!-- FLOATING RADIO PLAYER --><div id="kulzzyFloatingRadio">
-    <div class="kulzzyFloatRow">    <div class="kulzzyFloatPlayer">
-        <iframe
-            id="kulzzyRadioPlayerFrame"
-            src="https://kulzzy-auto-player.pages.dev/"
-            title="Kulzzy Radio Network Audio Player"
-            allow="autoplay"
-            scrolling="no">
-        </iframe>
-    </div>
+</iframe>
 
-    <div class="kulzzyFloatListeners">
-        <div>
-            <div class="kulzzyFloatListenerTitle">
-                <span class="kulzzyFloatDot"></span>
-                OUR LISTENERS
-            </div>
+<!-- FLOATING RADIO PLAYER -->
 
-            <div id="kulzzyFloatingListenerNumber" class="kulzzyFloatNumber">0</div>
+<div id="kulzzyFloatingRadio">
+    <div class="kulzzyFloatRow">
+
+        <div class="kulzzyFloatPlayer">
+            <iframe
+                id="kulzzyRadioPlayerFrame"
+                src="https://kulzzy-auto-player.pages.dev/"
+                title="Kulzzy Radio Network Audio Player"
+                allow="autoplay"
+                scrolling="no">
+            </iframe>
         </div>
-    </div>
 
+        <div class="kulzzyFloatListeners">
+            <div>
+                <div class="kulzzyFloatListenerTitle">
+                    <span class="kulzzyFloatDot"></span>
+                    OUR LISTENERS
+                </div>
+
+                <div id="kulzzyFloatingListenerNumber" class="kulzzyFloatNumber">0</div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
-</div><div id="kulzzyBackMessage">
+<div id="kulzzyBackMessage">
     Press BACK again to leave Kulzzy Radio
-</div><!-- LISTENER DISPLAY --><script>
+</div>
+
+<!-- LISTENER DISPLAY -->
+
+<script>
 (function () {
     var count = Math.floor(Math.random() * 9000) + 1000;
     var display = document.getElementById("kulzzyFloatingListenerNumber");
@@ -263,7 +289,11 @@ body::before {
         display.textContent = count.toLocaleString();
     }, 4000);
 })();
-</script><!-- CENTRAL APP BACK NAVIGATION --><script>
+</script>
+
+<!-- CENTRAL APP BACK NAVIGATION -->
+
+<script>
 (function () {
     "use strict";
 
@@ -441,7 +471,23 @@ body::before {
         handleAppBack();
     };
 })();
-</script><!-- EXTERNAL KULZZY UNIVERSAL MEDIA CONTROLLER --><script src="https://kulzzy.github.io/KULZZY-UNIVERSAL-MEDIA-CONTROL/controller.js?v=1"></script><!-- FIREBASE INSTALLATION TRACKING --><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script>
+</script>
+
+<!-- EXTERNAL KULZZY UNIVERSAL MEDIA CONTROLLER VERSION 2.0 -->
+
+<script
+    src="https://kulzzy.github.io/KULZZY-UNIVERSAL-MEDIA-CONTROL/controller.js?v=2"
+    onload="console.log('Kulzzy Universal Media Controller v2 loaded successfully.')"
+    onerror="console.error('Kulzzy Universal Media Controller failed to load.')">
+</script>
+
+<!-- FIREBASE INSTALLATION TRACKING -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
 (function () {
     const firebaseConfig = {
         apiKey: "AIzaSyDB9FAkoACYzpV2Zo1JxakfbM-n6ulI4hc",
@@ -505,7 +551,11 @@ body::before {
         console.error("Kulzzy Firebase setup failed:", error);
     }
 })();
-</script><!-- PWA INSTALLATION AND AUTOMATIC UPDATES --><script>
+</script>
+
+<!-- PWA INSTALLATION AND AUTOMATIC UPDATES -->
+
+<script>
 let kulzzyInstallPrompt = null;
 
 window.addEventListener("beforeinstallprompt", function (event) {
@@ -586,5 +636,9 @@ window.addEventListener("appinstalled", function () {
         localStorage.setItem("kulzzyRadioInstalled", "true");
     } catch (error) {}
 });
-</script><script src="./install.js"></script></body>
+</script>
+
+<script src="./install.js"></script>
+
+</body>
 </html>
