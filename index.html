@@ -473,12 +473,172 @@ body::before {
 })();
 </script>
 
-<!-- EXTERNAL KULZZY UNIVERSAL MEDIA CONTROLLER VERSION 2.0 -->
+<!-- KULZZY MAIN APP UNIVERSAL MEDIA BRIDGE -->
 
-<script
-    src="https://kulzzy.github.io/KULZZY-UNIVERSAL-MEDIA-CONTROL/controller.js?v=2"
-    onload="console.log('Kulzzy Universal Media Controller v2 loaded successfully.')"
-    onerror="console.error('Kulzzy Universal Media Controller failed to load.')">
+<script>
+(function () {
+    "use strict";
+
+    var TRUSTED_PLAYER_ORIGIN = "https://kulzzy.github.io";
+    var RADIO_ORIGIN = "https://kulzzy-auto-player.pages.dev";
+
+    var radioFrame = document.getElementById("kulzzyRadioPlayerFrame");
+
+    var activePlayers = Object.create(null);
+    var radioIsPaused = false;
+    var lastCommands = Object.create(null);
+
+    function getActivePlayerCount() {
+        return Object.keys(activePlayers).length;
+    }
+
+    function sendRadioCommand(action) {
+        if (!radioFrame || !radioFrame.contentWindow) {
+            console.error("Kulzzy media bridge: Radio iframe not found.");
+            return false;
+        }
+
+        try {
+            radioFrame.contentWindow.postMessage({
+                type: "KULZZY_MEDIA_CONTROL",
+                action: action,
+                source: "KULZZY_MAIN_APP"
+            }, RADIO_ORIGIN);
+
+            return true;
+
+        } catch (error) {
+            console.error("Kulzzy radio control message failed:", error);
+            return false;
+        }
+    }
+
+    function pauseRadio() {
+        if (radioIsPaused) return true;
+
+        var sent = sendRadioCommand("pause");
+
+        if (sent) {
+            radioIsPaused = true;
+            console.log("Kulzzy Radio pause command sent.");
+        }
+
+        return sent;
+    }
+
+    function resumeRadio() {
+        if (!radioIsPaused) return true;
+
+        var sent = sendRadioCommand("resume");
+
+        if (sent) {
+            radioIsPaused = false;
+            console.log("Kulzzy Radio resume command sent.");
+        }
+
+        return sent;
+    }
+
+    function sendAcknowledgement(event, data, action) {
+        if (!event.source) return;
+
+        try {
+            event.source.postMessage({
+                type: "KULZZY_MEDIA_CONTROL_ACK",
+                playerId: data.playerId,
+                action: action,
+                activePlayers: getActivePlayerCount(),
+                radioPaused: radioIsPaused,
+                radioFrameFound: !!radioFrame
+            }, event.origin);
+
+        } catch (error) {
+            console.error("Kulzzy media acknowledgement failed:", error);
+        }
+    }
+
+    function processMediaCommand(event) {
+        if (event.origin !== TRUSTED_PLAYER_ORIGIN) return;
+
+        var data = event.data;
+
+        if (!data || typeof data !== "object") return;
+        if (data.type !== "KULZZY_MEDIA_CONTROL") return;
+
+        if (
+            typeof data.playerId !== "string" ||
+            !data.playerId.trim()
+        ) return;
+
+        var playerId = data.playerId.trim();
+        var action = String(data.action || "").toLowerCase();
+
+        if (
+            action !== "play" &&
+            action !== "stop" &&
+            action !== "pause" &&
+            action !== "ended" &&
+            action !== "error"
+        ) return;
+
+        if (data.commandId) {
+            var commandKey = playerId + ":" + data.commandId;
+
+            if (lastCommands[commandKey]) {
+                sendAcknowledgement(event, data, action);
+                return;
+            }
+
+            lastCommands[commandKey] = true;
+
+            setTimeout(function () {
+                delete lastCommands[commandKey];
+            }, 30000);
+        }
+
+        if (action === "play") {
+            activePlayers[playerId] = true;
+            pauseRadio();
+
+        } else {
+            delete activePlayers[playerId];
+
+            if (getActivePlayerCount() === 0) {
+                resumeRadio();
+            }
+        }
+
+        sendAcknowledgement(event, data, action);
+
+        console.log(
+            "Kulzzy media bridge:",
+            playerId,
+            action,
+            "Active players:",
+            getActivePlayerCount()
+        );
+    }
+
+    window.addEventListener("message", processMediaCommand);
+
+    if (radioFrame) {
+        radioFrame.addEventListener("load", function () {
+            if (getActivePlayerCount() > 0) {
+                radioIsPaused = false;
+                pauseRadio();
+            }
+        });
+    }
+
+    window.kulzzyMediaBridge = {
+        getActivePlayers: getActivePlayerCount,
+        isRadioPaused: function () {
+            return radioIsPaused;
+        }
+    };
+
+    console.log("Kulzzy Main App Universal Media Bridge is ready.");
+})();
 </script>
 
 <!-- FIREBASE INSTALLATION TRACKING -->
